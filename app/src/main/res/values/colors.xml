@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="primary_red">#E50914</color>
+    <color name="primary_red_dark">#C20812</color>
+    <color name="primary_red_light">#F5515F</color>
+
+    <!-- Background Colors -->
+    <color name="background_primary">#0F0F0F</color>
+    <color name="background_secondary">#1A1A1A</color>
+    <color name="background_tertiary">#2D2D2D</color>
+    <color name="background_surface">#141414</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="text_tertiary">#808080</color>
+    <color name="text_inverse">#0F0F0F</color>
+
+    <!-- Status Colors -->
+    <color name="success_green">#1DB954</color>
+    <color name="error_red">#E74C3C</color>
+    <color name="warning_yellow">#F39C12</color>
+    <color name="info_blue">#3498DB</color>
+
+    <!-- Accent Colors -->
+    <color name="accent_gold">#FFB81C</color>
+    <color name="accent_purple">#8E44AD</color>
+    <color name="accent_cyan">#00BCD4</color>
+    <color name="accent_orange">#FF6B35</color>
+
+    <!-- Overlay Colors -->
+    <color name="overlay_dark">#000000</color>
+    <color name="overlay_dark_50">#80000000</color>
+    <color name="overlay_dark_70">#B3000000</color>
+    <color name="overlay_light">#FFFFFF</color>
+    <color name="overlay_light_50">#80FFFFFF</color>
+
+    <!-- Border Colors -->
+    <color name="border_light">#404040</color>
+    <color name="border_medium">#606060</color>
+    <color name="border_dark">#1F1F1F</color>
+
+    <!-- Divider Colors -->
+    <color name="divider_light">#404040</color>
+    <color name="divider_medium">#505050</color>
+
+    <!-- Rating Colors -->
+    <color name="rating_5_star">#FFD700</color>
+    <color name="rating_4_star">#FFC700</color>
+    <color name="rating_3_star">#FFB700</color>
+    <color name="rating_2_star">#FFA700</color>
+    <color name="rating_1_star">#FF9700</color>
+
+    <!-- Gradient Colors (Start) -->
+    <color name="gradient_start">#E50914</color>
+    <color name="gradient_middle">#8E1C14</color>
+    <color name="gradient_end">#0F0F0F</color>
+
+    <!-- Transparent Variants -->
+    <color name="primary_red_10">#19E50914</color>
+    <color name="primary_red_20">#33E50914</color>
+    <color name="primary_red_30">#4DE50914</color>
+    <color name="primary_red_40">#66E50914</color>
+    <color name="primary_red_50">#80E50914</color>
+    <color name="primary_red_60">#99E50914</color>
+    <color name="primary_red_70">#B3E50914</color>
+    <color name="primary_red_80">#CCE50914</color>
+    <color name="primary_red_90">#E6E50914</color>
+
+    <!-- Status Bars -->
+    <color name="status_bar_color">#0F0F0F</color>
+    <color name="navigation_bar_color">#1A1A1A</color>
+
+    <!-- Card/Surface Colors -->
+    <color name="card_background">#1F1F1F</color>
+    <color name="card_background_elevated">#2A2A2A</color>
+
+    <!-- Input Colors -->
+    <color name="input_background">#2D2D2D</color>
+    <color name="input_background_focused">#404040</color>
+    <color name="input_cursor">#E50914</color>
+    <color name="input_hint">#808080</color>
+
+    <!-- Button Colors -->
+    <color name="button_enabled">#E50914</color>
+    <color name="button_disabled">#808080</color>
+    <color name="button_pressed">#C20812</color>
+    <color name="button_focused">#F5515F</color>
+
+    <!-- Progress Colors -->
+    <color name="progress_foreground">#E50914</color>
+    <color name="progress_background">#404040</color>
+    <color name="progress_secondary">#FFB81C</color>
+
+    <!-- Shadow Colors -->
+    <color name="shadow_color">#000000</color>
+    <color name="shadow_color_50">#80000000</color>
+
+    <!-- Chip Colors -->
+    <color name="chip_background">#2D2D2D</color>
+    <color name="chip_background_selected">#E50914</color>
+    <color name="chip_text">#FFFFFF</color>
+    <color name="chip_text_selected">#FFFFFF</color>
+
+    <!-- Tab Colors -->
+    <color name="tab_inactive">#808080</color>
+    <color name="tab_active">#E50914</color>
+    <color name="tab_indicator">#E50914</color>
+
+    <!-- Skeleton/Shimmer -->
+    <color name="skeleton_light">#2D2D2D</color>
+    <color name="skeleton_dark">#1F1F1F</color>
+    <color name="skeleton_highlight">#3D3D3D</color>
+</resources>

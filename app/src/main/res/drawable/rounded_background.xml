@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+    Drawable resources for rounded backgrounds used throughout the app.
+    These shapes are used for various UI elements with different corner radii.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/card_background" />
+    <corners android:radius="@dimen/radius_medium" />
+</shape>

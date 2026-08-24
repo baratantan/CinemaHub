@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">CinemaHub</string>
+    <string name="app_tagline">تطبيق لمشاهدة الأفلام والمسلسلات</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_search">بحث</string>
+    <string name="nav_favorites">المفضلة</string>
+    <string name="nav_watch_history">المشاهدة</string>
+
+    <!-- Home Screen -->
+    <string name="home_featured">الأفلام المميزة</string>
+    <string name="home_latest">أحدث الأفلام</string>
+    <string name="home_anime">الأنمي</string>
+    <string name="home_genres">التصنيفات</string>
+    <string name="home_search_hint">ابحث عن أفلام ومسلسلات...</string>
+
+    <!-- Movie Detail Screen -->
+    <string name="movie_details">تفاصيل الفيلم</string>
+    <string name="movie_description">الوصف</string>
+    <string name="movie_rating">التقييم</string>
+    <string name="movie_duration">المدة</string>
+    <string name="movie_genre">التصنيف</string>
+    <string name="movie_release_date">تاريخ الإصدار</string>
+    <string name="movie_add_to_favorites">إضافة للمفضلة</string>
+    <string name="movie_remove_from_favorites">إزالة من المفضلة</string>
+    <string name="movie_added_to_favorites">تمت الإضافة للمفضلة</string>
+    <string name="movie_removed_from_favorites">تمت الإزالة من المفضلة</string>
+
+    <!-- Video Player -->
+    <string name="video_options">خيارات التشغيل</string>
+    <string name="video_quality">الجودة</string>
+    <string name="video_server">السيرفر</string>
+    <string name="video_watch_now">مشاهدة الآن</string>
+    <string name="video_play">تشغيل</string>
+    <string name="video_pause">إيقاف</string>
+    <string name="video_mute">كتم الصوت</string>
+    <string name="video_unmute">إلغاء كتم الصوت</string>
+    <string name="video_fullscreen">ملء الشاشة</string>
+    <string name="video_exit_fullscreen">الخروج من ملء الشاشة</string>
+    <string name="video_loading">جاري التحميل...</string>
+    <string name="video_buffering">جاري المعالجة...</string>
+    <string name="video_error">خطأ في تحميل الفيديو</string>
+    <string name="video_retry">إعادة محاولة</string>
+    <string name="video_back">رجوع</string>
+
+    <!-- Video Links -->
+    <string name="video_fetching_links">جاري البحث عن روابط التشغيل...</string>
+    <string name="video_no_links">لم يتم العثور على روابط تشغيل</string>
+    <string name="video_links_found">تم العثور على %1$d روابط</string>
+    <string name="video_select">اختيار</string>
+    <string name="video_selected">مختار</string>
+
+    <!-- Search Screen -->
+    <string name="search_title">البحث</string>
+    <string name="search_hint">ابحث عن أفلام ومسلسلات...</string>
+    <string name="search_results">نتائج البحث</string>
+    <string name="search_no_results">لم يتم العثور على نتائج</string>
+    <string name="search_enter_query">أدخل كلمة البحث</string>
+
+    <!-- Favorites Screen -->
+    <string name="favorites_title">المفضلة</string>
+    <string name="favorites_empty">لا توجد عناصر مفضلة</string>
+    <string name="favorites_add">إضافة للمفضلة</string>
+    <string name="favorites_remove">إزالة من المفضلة</string>
+
+    <!-- Watch History Screen -->
+    <string name="history_title">سجل المشاهدة</string>
+    <string name="history_empty">لا توجد عناصر مشاهدة</string>
+    <string name="history_clear">مسح السجل</string>
+    <string name="history_last_watched">آخر مشاهدة</string>
+
+    <!-- Genres -->
+    <string name="genre_action">أكشن</string>
+    <string name="genre_comedy">كوميديا</string>
+    <string name="genre_drama">درама</string>
+    <string name="genre_horror">رعب</string>
+    <string name="genre_romance">رومانسية</string>
+    <string name="genre_scifi">خيال علمي</string>
+    <string name="genre_adventure">مغامرة</string>
+    <string name="genre_thriller">إثارة</string>
+    <string name="genre_animation">أنمي</string>
+    <string name="genre_documentary">وثائقي</string>
+
+    <!-- Errors -->
+    <string name="error_network">خطأ في الاتصال بالإنترنت</string>
+    <string name="error_loading_movies">خطأ في تحميل الأفلام: %1$s</string>
+    <string name="error_loading_movie_details">خطأ في تحميل التفاصيل: %1$s</string>
+    <string name="error_loading_video_links">خطأ في جلب الروابط: %1$s</string>
+    <string name="error_no_internet">لا يوجد اتصال إنترنت</string>
+    <string name="error_timeout">انتهت مهلة الطلب</string>
+    <string name="error_server">خطأ في السيرفر</string>
+    <string name="error_unknown">خطأ غير معروف</string>
+    <string name="error_try_again">حاول مرة أخرى</string>
+
+    <!-- Messages -->
+    <string name="msg_loading">جاري التحميل...</string>
+    <string name="msg_no_data">لا توجد بيانات</string>
+    <string name="msg_refreshing">جاري التحديث...</string>
+    <string name="msg_success">تم بنجاح</string>
+    <string name="msg_failed">فشل العملية</string>
+    <string name="msg_confirm_delete">هل تريد حذف هذا العنصر؟</string>
+    <string name="msg_yes">نعم</string>
+    <string name="msg_no">لا</string>
+    <string name="msg_cancel">إلغاء</string>
+    <string name="msg_delete">حذف</string>
+    <string name="msg_confirm">تأكيد</string>
+
+    <!-- Settings -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_theme">المظهر</string>
+    <string name="settings_quality">جودة الفيديو</string>
+    <string name="settings_about">عن التطبيق</string>
+    <string name="settings_version">الإصدار</string>
+    <string name="settings_developer">المطور</string>
+
+    <!-- Quality Options -->
+    <string name="quality_240p">240p</string>
+    <string name="quality_360p">360p</string>
+    <string name="quality_480p">480p</string>
+    <string name="quality_720p">720p</string>
+    <string name="quality_1080p">1080p</string>
+    <string name="quality_auto">تلقائي</string>
+
+    <!-- Duration -->
+    <string name="duration_minute">دقيقة</string>
+    <string name="duration_minutes">%1$d دقيقة</string>
+    <string name="duration_hour">ساعة</string>
+    <string name="duration_hours">%1$d ساعة</string>
+
+    <!-- Date Formats -->
+    <string name="date_today">اليوم</string>
+    <string name="date_yesterday">أمس</string>
+    <string name="date_days_ago">منذ %1$d أيام</string>
+    <string name="date_weeks_ago">منذ %1$d أسابيع</string>
+
+    <!-- About -->
+    <string name="about_title">عن CinemaHub</string>
+    <string name="about_description">تطبيق لمشاهدة الأفلام والمسلسلات بجودة عالية وسهولة في الاستخدام</string>
+    <string name="about_developer">المطور: Baratan</string>
+    <string name="about_version_format">الإصدار: %1$s</string>
+
+    <!-- Accessibility -->
+    <string name="accessibility_play_button">زر التشغيل</string>
+    <string name="accessibility_favorite_button">زر المفضلة</string>
+    <string name="accessibility_search_button">زر البحث</string>
+    <string name="accessibility_back_button">زر الرجوع</string>
+    <string name="accessibility_movie_poster">صورة الفيلم</string>
+    <string name="accessibility_rating">التقييم</string>
+    <string name="accessibility_progress_bar">شريط التقدم</string>
+
+    <!-- Notifications -->
+    <string name="notify_new_movie">فيلم جديد: %1$s</string>
+    <string name="notify_new_series">مسلسل جديد: %1$s</string>
+    <string name="notify_episode_available">حلقة جديدة متاحة: %1$s</string>
+
+    <!-- Video Info -->
+    <string name="video_server_format">السيرفر: %1$s</string>
+    <string name="video_quality_format">الجودة: %1$s</string>
+    <string name="video_time_format">%1$02d:%2$02d:%3$02d</string>
+    <string name="video_current_time">الوقت الحالي: %1$s</string>
+    <string name="video_total_duration">المدة الكلية: %1$s</string>
+
+    <!-- Series -->
+    <string name="series_title">المسلسلات</string>
+    <string name="series_season">الموسم</string>
+    <string name="series_episode">الحلقة</string>
+    <string name="series_episodes">%1$d حلقة</string>
+    <string name="series_no_episodes">لا توجد حلقات</string>
+
+    <!-- Ratings -->
+    <string name="rating_excellent">ممتاز</string>
+    <string name="rating_good">جيد</string>
+    <string name="rating_average">متوسط</string>
+    <string name="rating_poor">ضعيف</string>
+    <string name="rating_stars">%1$.1f من 5 نجوم</string>
+
+    <!-- Actions -->
+    <string name="action_continue_watching">متابعة المشاهدة</string>
+    <string name="action_watch_now">مشاهدة الآن</string>
+    <string name="action_share">مشاركة</string>
+    <string name="action_report">إبلاغ عن مشكلة</string>
+    <string name="action_rate">تقييم التطبيق</string>
+    <string name="action_feedback">إرسال ملاحظة</string>
+</resources>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_xxxsmall">2dp</dimen>
+    <dimen name="spacing_xxsmall">4dp</dimen>
+    <dimen name="spacing_xsmall">8dp</dimen>
+    <dimen name="spacing_small">12dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">20dp</dimen>
+    <dimen name="spacing_xlarge">24dp</dimen>
+    <dimen name="spacing_xxlarge">32dp</dimen>
+    <dimen name="spacing_xxxlarge">48dp</dimen>
+
+    <!-- Corner Radius -->
+    <dimen name="radius_small">4dp</dimen>
+    <dimen name="radius_medium">8dp</dimen>
+    <dimen name="radius_large">12dp</dimen>
+    <dimen name="radius_xlarge">16dp</dimen>
+    <dimen name="radius_xxlarge">24dp</dimen>
+    <dimen name="radius_full">50dp</dimen>
+
+    <!-- Text Sizes -->
+    <dimen name="text_size_display_large">57sp</dimen>
+    <dimen name="text_size_display_medium">45sp</dimen>
+    <dimen name="text_size_display_small">36sp</dimen>
+    <dimen name="text_size_headline_large">32sp</dimen>
+    <dimen name="text_size_headline_medium">28sp</dimen>
+    <dimen name="text_size_headline_small">24sp</dimen>
+    <dimen name="text_size_title_large">22sp</dimen>
+    <dimen name="text_size_title_medium">16sp</dimen>
+    <dimen name="text_size_title_small">14sp</dimen>
+    <dimen name="text_size_body_large">16sp</dimen>
+    <dimen name="text_size_body_medium">14sp</dimen>
+    <dimen name="text_size_body_small">12sp</dimen>
+    <dimen name="text_size_label_large">14sp</dimen>
+    <dimen name="text_size_label_medium">12sp</dimen>
+    <dimen name="text_size_label_small">11sp</dimen>
+
+    <!-- Icon Sizes -->
+    <dimen name="icon_size_small">16dp</dimen>
+    <dimen name="icon_size_medium">24dp</dimen>
+    <dimen name="icon_size_large">32dp</dimen>
+    <dimen name="icon_size_xlarge">48dp</dimen>
+    <dimen name="icon_size_xxlarge">64dp</dimen>
+
+    <!-- Touch Target Minimum -->
+    <dimen name="touch_target_min">48dp</dimen>
+
+    <!-- Button Sizes -->
+    <dimen name="button_height_small">32dp</dimen>
+    <dimen name="button_height_medium">40dp</dimen>
+    <dimen name="button_height_large">48dp</dimen>
+    <dimen name="button_padding_horizontal">24dp</dimen>
+    <dimen name="button_padding_vertical">10dp</dimen>
+
+    <!-- Card/Surface Dimensions -->
+    <dimen name="card_elevation">2dp</dimen>
+    <dimen name="card_elevation_elevated">8dp</dimen>
+    <dimen name="card_corner_radius">12dp</dimen>
+    <dimen name="card_content_padding">16dp</dimen>
+
+    <!-- Input Field Dimensions -->
+    <dimen name="input_height">48dp</dimen>
+    <dimen name="input_corner_radius">8dp</dimen>
+    <dimen name="input_padding_horizontal">16dp</dimen>
+    <dimen name="input_padding_vertical">12dp</dimen>
+    <dimen name="input_text_size">14sp</dimen>
+
+    <!-- Image Dimensions -->
+    <dimen name="image_poster_width">140dp</dimen>
+    <dimen name="image_poster_height">200dp</dimen>
+    <dimen name="image_backdrop_height">220dp</dimen>
+    <dimen name="image_avatar_size">48dp</dimen>
+    <dimen name="image_thumbnail_size">64dp</dimen>
+
+    <!-- Bottom Navigation -->
+    <dimen name="bottom_nav_height">56dp</dimen>
+    <dimen name="bottom_nav_icon_size">24dp</dimen>
+    <dimen name="bottom_nav_item_padding">12dp</dimen>
+
+    <!-- App Bar/Toolbar -->
+    <dimen name="app_bar_height">56dp</dimen>
+    <dimen name="app_bar_expanded_height">200dp</dimen>
+    <dimen name="app_bar_padding">16dp</dimen>
+
+    <!-- Dialog -->
+    <dimen name="dialog_corner_radius">12dp</dimen>
+    <dimen name="dialog_padding">24dp</dimen>
+    <dimen name="dialog_min_width">280dp</dimen>
+    <dimen name="dialog_max_width">560dp</dimen>
+
+    <!-- FAB (Floating Action Button) -->
+    <dimen name="fab_size_normal">56dp</dimen>
+    <dimen name="fab_size_extended">48dp</dimen>
+    <dimen name="fab_size_mini">40dp</dimen>
+    <dimen name="fab_icon_size">24dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="elevation_none">0dp</dimen>
+    <dimen name="elevation_small">2dp</dimen>
+    <dimen name="elevation_medium">4dp</dimen>
+    <dimen name="elevation_large">8dp</dimen>
+    <dimen name="elevation_xlarge">16dp</dimen>
+
+    <!-- Stroke Width -->
+    <dimen name="stroke_width_thin">1dp</dimen>
+    <dimen name="stroke_width_normal">2dp</dimen>
+    <dimen name="stroke_width_thick">3dp</dimen>
+
+    <!-- Progress Indicator -->
+    <dimen name="progress_bar_height">4dp</dimen>
+    <dimen name="progress_indicator_size">48dp</dimen>
+
+    <!-- Divider -->
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="divider_padding_horizontal">16dp</dimen>
+    <dimen name="divider_padding_vertical">8dp</dimen>
+
+    <!-- Chip -->
+    <dimen name="chip_height">32dp</dimen>
+    <dimen name="chip_padding_horizontal">12dp</dimen>
+    <dimen name="chip_padding_vertical">8dp</dimen>
+    <dimen name="chip_corner_radius">16dp</dimen>
+    <dimen name="chip_icon_size">18dp</dimen>
+
+    <!-- Badge -->
+    <dimen name="badge_size">24dp</dimen>
+    <dimen name="badge_text_size">10sp</dimen>
+
+    <!-- Screen Margins (Responsive) -->
+    <dimen name="screen_margin_horizontal">16dp</dimen>
+    <dimen name="screen_margin_vertical">16dp</dimen>
+
+    <!-- List/Grid Items -->
+    <dimen name="list_item_height">56dp</dimen>
+    <dimen name="grid_item_spacing">8dp</dimen>
+
+    <!-- Movie Card Specific -->
+    <dimen name="movie_card_corner_radius">12dp</dimen>
+    <dimen name="movie_card_elevation">4dp</dimen>
+
+    <!-- Video Player -->
+    <dimen name="player_controls_height">56dp</dimen>
+    <dimen name="player_progress_height">3dp</dimen>
+    <dimen name="player_button_size">32dp</dimen>
+
+    <!-- Shadow -->
+    <dimen name="shadow_size">8dp</dimen>
+</resources>
