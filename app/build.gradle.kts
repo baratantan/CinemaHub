@@ -101,6 +101,16 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.33.2-alpha")
     implementation("com.google.accompanist:accompanist-pager:0.33.2-alpha")
 
+    // Jsoup for Web Scraping
+    implementation("org.jsoup:jsoup:1.16.1")
+
+    // Ktor Client for HTTP Requests
+    implementation("io.ktor:ktor-client-android:2.3.4")
+    implementation("io.ktor:ktor-client-core:2.3.4")
+
+    // Kotlin Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
