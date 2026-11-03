@@ -20,6 +20,17 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Firebase client configuration is supplied locally/through CI; never commit credentials.
+        val firebaseApiKey = providers.gradleProperty("FIREBASE_API_KEY").orElse("").get()
+            .replace("\\", "\\\\").replace("\"", "\\\"")
+        val firebaseAppId = providers.gradleProperty("FIREBASE_APP_ID").orElse("").get()
+            .replace("\\", "\\\\").replace("\"", "\\\"")
+        val firebaseProjectId = providers.gradleProperty("FIREBASE_PROJECT_ID").orElse("").get()
+            .replace("\\", "\\\\").replace("\"", "\\\"")
+        buildConfigField("String", "FIREBASE_API_KEY", "\"$firebaseApiKey\"")
+        buildConfigField("String", "FIREBASE_APP_ID", "\"$firebaseAppId\"")
+        buildConfigField("String", "FIREBASE_PROJECT_ID", "\"$firebaseProjectId\"")
     }
 
     buildTypes {
@@ -40,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
@@ -96,6 +108,12 @@ dependencies {
 
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // Firebase cloud reviews and anonymous user identity
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // ExoPlayer
     implementation("androidx.media3:media3-exoplayer:1.1.1")

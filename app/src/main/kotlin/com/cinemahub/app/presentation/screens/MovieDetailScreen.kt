@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -71,6 +70,13 @@ fun MovieDetailScreen(
     val videoLinks by viewModel.videoLinks.collectAsState()
     val selectedVideoLink by viewModel.selectedVideoLink.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val reviews by viewModel.reviews.collectAsState()
+    val reviewRating by viewModel.reviewRating.collectAsState()
+    val reviewAuthorName by viewModel.reviewAuthorName.collectAsState()
+    val reviewComment by viewModel.reviewComment.collectAsState()
+    val isSubmittingReview by viewModel.isSubmittingReview.collectAsState()
+    val reviewError by viewModel.reviewError.collectAsState()
+    val reviewSubmitted by viewModel.reviewSubmitted.collectAsState()
 
     if (isLoading) {
         Box(Modifier.fillMaxSize().background(BackgroundPrimary), contentAlignment = Alignment.Center) {
@@ -118,6 +124,21 @@ fun MovieDetailScreen(
                     Text("الوصف", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 12.dp))
                     Text(movie?.description.orEmpty(), color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(bottom = 24.dp))
                 }
+            }
+            item {
+                MovieReviewsSection(
+                    reviews = reviews,
+                    rating = reviewRating,
+                    authorName = reviewAuthorName,
+                    comment = reviewComment,
+                    isSubmitting = isSubmittingReview,
+                    errorMessage = reviewError,
+                    submitted = reviewSubmitted,
+                    onRatingChange = viewModel::setReviewRating,
+                    onAuthorNameChange = viewModel::setReviewAuthorName,
+                    onCommentChange = viewModel::setReviewComment,
+                    onSubmit = viewModel::submitReview
+                )
             }
             item {
                 Column(Modifier.fillMaxWidth().padding(16.dp)) {
