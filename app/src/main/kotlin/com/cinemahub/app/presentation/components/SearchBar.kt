@@ -1,7 +1,6 @@
 package com.cinemahub.app.presentation.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,31 +23,26 @@ import com.cinemahub.app.ui.theme.TextSecondary
 fun SearchBar(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSearchClick: (() -> Unit)? = null
 ) {
     OutlinedTextField(
         value = searchQuery,
         onValueChange = onSearchQueryChanged,
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(56.dp)
             .padding(horizontal = 16.dp)
-            .background(
-                color = BackgroundTertiary,
-                shape = RoundedCornerShape(24.dp)
+            .then(
+                if (onSearchClick != null) Modifier.clickable(onClick = onSearchClick)
+                else Modifier
             ),
+        readOnly = onSearchClick != null,
         placeholder = {
-            Text(
-                text = "ابحث عن أفلام ومسلسلات...",
-                color = TextSecondary
-            )
+            Text("ابحث عن أفلام ومسلسلات...", color = TextSecondary)
         },
         leadingIcon = {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = "بحث",
-                tint = TextSecondary
-            )
+            Icon(Icons.Filled.Search, contentDescription = "بحث", tint = TextSecondary)
         },
         colors = TextFieldDefaults.colors(
             unfocusedContainerColor = BackgroundTertiary,
@@ -59,6 +53,7 @@ fun SearchBar(
             unfocusedIndicatorColor = Color.Transparent,
             cursorColor = TextPrimary
         ),
+        shape = RoundedCornerShape(24.dp),
         singleLine = true
     )
 }

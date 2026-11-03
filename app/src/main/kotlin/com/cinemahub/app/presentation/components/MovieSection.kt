@@ -24,28 +24,12 @@ fun MovieSection(
     onMovieClick: (Movie) -> Unit = {},
     onFavoriteClick: (Movie) -> Unit = {}
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp)
-    ) {
-        Text(
-            text = title,
-            color = TextPrimary,
-            fontSize = 18.sp,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(movies) { movie ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .height(220.dp)
-                ) {
+    if (movies.isEmpty()) return
+    Column(Modifier.fillMaxWidth().padding(vertical = 16.dp)) {
+        Text(title, color = TextPrimary, fontSize = 18.sp, modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+        LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(movies, key = { it.id }) { movie ->
+                Box(Modifier.fillMaxWidth(0.5f).height(220.dp)) {
                     MovieCard(
                         title = movie.title,
                         posterUrl = movie.posterUrl,

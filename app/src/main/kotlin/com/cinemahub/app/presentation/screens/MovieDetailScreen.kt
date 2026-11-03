@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -56,18 +53,14 @@ import com.cinemahub.app.ui.theme.TextTertiary
 @Composable
 fun MovieDetailScreen(
     movieId: Int,
-    pageUrl: String = "", // رابط الموقع لجلب الفيديو
+    pageUrl: String = "",
     viewModel: MovieDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onPlayClick: (String) -> Unit = {}
+    onPlayClick: (String, String) -> Unit = { _, _ -> }
 ) {
-    // تحميل الفيلم والفيديو عند فتح الشاشة
-    LaunchedEffect(movieId) {
+    LaunchedEffect(movieId, pageUrl) {
         viewModel.loadMovie(movieId)
-        // جلب روابط الفيديو من الموقع تلقائياً
-        if (pageUrl.isNotEmpty()) {
-            viewModel.fetchVideoLinksForMovie(pageUrl)
-        }
+        if (pageUrl.isNotBlank()) viewModel.fetchVideoLinksForMovie(pageUrl)
     }
 
     val isLoading by viewModel.isLoading.collectAsState()
@@ -77,233 +70,112 @@ fun MovieDetailScreen(
     val videoLinks by viewModel.videoLinks.collectAsState()
     val selectedVideoLink by viewModel.selectedVideoLink.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
+    val reviews by viewModel.reviews.collectAsState()
+    val reviewRating by viewModel.reviewRating.collectAsState()
+    val reviewAuthorName by viewModel.reviewAuthorName.collectAsState()
+    val reviewComment by viewModel.reviewComment.collectAsState()
+    val isSubmittingReview by viewModel.isSubmittingReview.collectAsState()
+    val reviewError by viewModel.reviewError.collectAsState()
+    val reviewSubmitted by viewModel.reviewSubmitted.collectAsState()
 
     if (isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BackgroundPrimary),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(Modifier.fillMaxSize().background(BackgroundPrimary), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(color = PrimaryRed)
         }
     } else if (movie != null) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BackgroundPrimary)
-        ) {
-            // Backdrop with back button
+        LazyColumn(Modifier.fillMaxSize().background(BackgroundPrimary)) {
             item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                ) {
+                Box(Modifier.fillMaxWidth().height(250.dp)) {
                     AsyncImage(
                         model = movie?.backdropUrl,
                         contentDescription = movie?.title,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
-
-                    IconButton(
-                        onClick = onBackClick,
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "رجوع",
-                            tint = Color.White
-                        )
+                    IconButton(onClick = onBackClick, modifier = Modifier.align(Alignment.TopStart).padding(8.dp)) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "رجوع", tint = Color.White)
                     }
                 }
             }
-
-            // Content
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    // Title and rating
+                Column(Modifier.fillMaxWidth().padding(16.dp)) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp),
+                        Modifier.fillMaxWidth().padding(bottom = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = movie?.title ?: "",
-                                color = TextPrimary,
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = movie?.releaseDate ?: "",
-                                color = TextSecondary,
-                                fontSize = 14.sp,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
+                        Column(Modifier.weight(1f)) {
+                            Text(movie?.title.orEmpty(), color = TextPrimary, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                            Text(movie?.releaseDate.orEmpty(), color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp))
                         }
-
-                        IconButton(
-                            onClick = { viewModel.toggleFavorite() }
-                        ) {
+                        IconButton(onClick = viewModel::toggleFavorite) {
                             Icon(
-                                imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                contentDescription = "إضافة للمفضلة",
+                                if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                contentDescription = if (isFavorite) "إزالة من المفضلة" else "إضافة للمفضلة",
                                 tint = if (isFavorite) PrimaryRed else TextSecondary
                             )
                         }
                     }
-
-                    // Rating and duration
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp)
-                    ) {
-                        Text(
-                            text = "⭐ ${movie?.rating ?: 0.0}",
-                            color = PrimaryRed,
-                            fontSize = 14.sp
-                        )
-                        Text(
-                            text = " • ${movie?.duration ?: 0} دقيقة",
-                            color = TextSecondary,
-                            fontSize = 14.sp
-                        )
+                    Row(Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
+                        Text("⭐ ${movie?.rating ?: 0.0}", color = PrimaryRed, fontSize = 14.sp)
+                        Text(" • ${movie?.duration ?: 0} دقيقة", color = TextSecondary, fontSize = 14.sp)
                     }
-
-                    // Genre
-                    Text(
-                        text = movie?.genre?.joinToString(", ") ?: "",
-                        color = TextSecondary,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
-
+                    Text(movie?.genre?.joinToString(", ").orEmpty(), color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(bottom = 16.dp))
                     Divider(color = BackgroundTertiary, thickness = 1.dp)
-
-                    // Description
-                    Text(
-                        text = "الوصف",
-                        color = TextPrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(vertical = 12.dp)
-                    )
-                    Text(
-                        text = movie?.description ?: "",
-                        color = TextSecondary,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
+                    Text("الوصف", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 12.dp))
+                    Text(movie?.description.orEmpty(), color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(bottom = 24.dp))
                 }
             }
-
-            // Video Links Section
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "خيارات التشغيل",
-                        color = TextPrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-
-                    // Loading state for videos
+                MovieReviewsSection(
+                    reviews = reviews,
+                    rating = reviewRating,
+                    authorName = reviewAuthorName,
+                    comment = reviewComment,
+                    isSubmitting = isSubmittingReview,
+                    errorMessage = reviewError,
+                    submitted = reviewSubmitted,
+                    onRatingChange = viewModel::setReviewRating,
+                    onAuthorNameChange = viewModel::setReviewAuthorName,
+                    onCommentChange = viewModel::setReviewComment,
+                    onSubmit = viewModel::submitReview
+                )
+            }
+            item {
+                Column(Modifier.fillMaxWidth().padding(16.dp)) {
+                    Text("خيارات التشغيل", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 12.dp))
                     if (isLoadingVideo) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-                                CircularProgressIndicator(color = PrimaryRed)
-                                Text(
-                                    text = "جاري البحث عن روابط التشغيل...",
-                                    color = TextSecondary,
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                            }
+                        Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator(color = PrimaryRed)
                         }
                     }
-
-                    // Error message
-                    if (errorMessage != null) {
+                    errorMessage?.let { message ->
                         Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 12.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = ErrorColor.copy(alpha = 0.2f)
-                            ),
+                            Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                            colors = CardDefaults.cardColors(containerColor = ErrorColor.copy(alpha = 0.2f)),
                             shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                text = errorMessage ?: "",
-                                color = ErrorColor,
-                                modifier = Modifier.padding(12.dp),
-                                fontSize = 12.sp
-                            )
-                        }
+                        ) { Text(message, color = ErrorColor, modifier = Modifier.padding(12.dp), fontSize = 12.sp) }
                     }
-
-                    // Video links list
                     if (videoLinks.isNotEmpty()) {
                         videoLinks.forEach { link ->
                             VideoLinkCard(
                                 link = link,
                                 isSelected = selectedVideoLink?.url == link.url,
-                                onSelect = {
-                                    viewModel.selectVideoLink(link)
-                                },
-                                onPlay = {
-                                    onPlayClick(link.url)
-                                }
+                                onSelect = { viewModel.selectVideoLink(link) },
+                                onPlay = { onPlayClick(link.url, movie?.title.orEmpty()) }
                             )
                         }
-                    } else if (!isLoadingVideo && pageUrl.isNotEmpty()) {
-                        Text(
-                            text = "لم يتم العثور على روابط تشغيل",
-                            color = TextTertiary,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
+                    } else if (!isLoadingVideo && pageUrl.isNotBlank()) {
+                        Text("لم يتم العثور على روابط تشغيل", color = TextTertiary, modifier = Modifier.padding(vertical = 8.dp))
                     }
                 }
             }
-
-            // Play button
             item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
+                Column(Modifier.fillMaxWidth().padding(16.dp)) {
                     Button(
                         onClick = {
-                            selectedVideoLink?.let { link ->
-                                onPlayClick(link.url)
-                            }
+                            selectedVideoLink?.let { link -> onPlayClick(link.url, movie?.title.orEmpty()) }
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp),
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = PrimaryRed,
                             disabledContainerColor = PrimaryRed.copy(alpha = 0.5f)
@@ -311,20 +183,16 @@ fun MovieDetailScreen(
                         shape = RoundedCornerShape(8.dp),
                         enabled = selectedVideoLink != null
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "تشغيل",
-                            tint = Color.White,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
+                        Icon(Icons.Filled.PlayArrow, contentDescription = "تشغيل", tint = Color.White, modifier = Modifier.padding(end = 8.dp))
                         Text("مشاهدة الآن", color = Color.White)
                     }
                 }
             }
-
-            item {
-                Box(modifier = Modifier.padding(bottom = 56.dp))
-            }
+            item { Box(Modifier.padding(bottom = 24.dp)) }
+        }
+    } else {
+        Box(Modifier.fillMaxSize().background(BackgroundPrimary), contentAlignment = Alignment.Center) {
+            Text("لم يتم العثور على الفيلم", color = TextSecondary)
         }
     }
 }
@@ -337,82 +205,33 @@ fun VideoLinkCard(
     onPlay: () -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) BackgroundTertiary else BackgroundSecondary
-        ),
+        Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = if (isSelected) BackgroundTertiary else BackgroundSecondary),
         shape = RoundedCornerShape(8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp)
-        ) {
+        Column(Modifier.padding(12.dp)) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                Modifier.fillMaxWidth().padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = link.serverName,
-                        color = TextPrimary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "الجودة: ${link.quality}",
-                        color = TextSecondary,
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
+                Column(Modifier.weight(1f)) {
+                    Text(link.serverName, color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("الجودة: ${link.quality}", color = TextSecondary, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
                 }
-                
-                if (isSelected) {
-                    Text(
-                        text = "✓",
-                        color = PrimaryRed,
-                        fontSize = 20.sp
-                    )
-                }
+                if (isSelected) Text("✓", color = PrimaryRed, fontSize = 20.sp)
             }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedButton(
-                    onClick = onSelect,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(36.dp),
-                    shape = RoundedCornerShape(6.dp)
-                ) {
-                    Text(
-                        text = if (isSelected) "مختار" else "اختيار",
-                        fontSize = 12.sp
-                    )
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onSelect, modifier = Modifier.weight(1f).height(36.dp), shape = RoundedCornerShape(6.dp)) {
+                    Text(if (isSelected) "مختار" else "اختيار", fontSize = 12.sp)
                 }
-
                 Button(
                     onClick = onPlay,
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(36.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryRed
-                    ),
+                    modifier = Modifier.weight(1f).height(36.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryRed),
                     shape = RoundedCornerShape(6.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.PlayArrow,
-                        contentDescription = "تشغيل",
-                        tint = Color.White,
-                        modifier = Modifier.padding(end = 4.dp)
-                    )
+                    Icon(Icons.Filled.PlayArrow, contentDescription = "تشغيل", tint = Color.White, modifier = Modifier.padding(end = 4.dp))
                     Text("تشغيل", fontSize = 12.sp)
                 }
             }
