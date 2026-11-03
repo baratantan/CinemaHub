@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cinemahub.app.domain.model.Movie
 import com.cinemahub.app.presentation.components.FeaturedMovieCard
 import com.cinemahub.app.presentation.components.GenreGrid
 import com.cinemahub.app.presentation.components.MovieSection
@@ -45,12 +44,7 @@ fun HomeScreen(
             .background(BackgroundPrimary)
             .verticalScroll(rememberScrollState())
     ) {
-        // Header with logo
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
+        Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Text(
                 text = "🎬 CinemaHub",
                 color = PrimaryRed,
@@ -59,57 +53,45 @@ fun HomeScreen(
             )
         }
 
-        // Search bar
         SearchBar(
             searchQuery = "",
             onSearchQueryChanged = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            onSearchClick = onSearchClick
         )
 
         if (isLoading) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(32.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(color = PrimaryRed)
             }
         } else {
-            // Featured movies
             if (featuredMovies.isNotEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                ) {
+                Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
                     Text(
                         text = "الأفلام المميزة",
                         color = TextPrimary,
                         fontSize = 18.sp,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                     )
-
                     FeaturedMovieCard(
-                        title = featuredMovies[0].title,
-                        description = featuredMovies[0].description,
-                        backdropUrl = featuredMovies[0].backdropUrl,
-                        rating = featuredMovies[0].rating,
-                        onClick = { onMovieClick(featuredMovies[0].id) }
+                        title = featuredMovies.first().title,
+                        description = featuredMovies.first().description,
+                        backdropUrl = featuredMovies.first().backdropUrl,
+                        rating = featuredMovies.first().rating,
+                        onClick = { onMovieClick(featuredMovies.first().id) }
                     )
                 }
             }
 
-            // Latest movies section
             MovieSection(
                 title = "أحدث الأفلام",
                 movies = latestMovies,
                 onMovieClick = { onMovieClick(it.id) }
             )
 
-            // Anime section
             if (animeMovies.isNotEmpty()) {
                 MovieSection(
                     title = "الأنمي",
@@ -118,16 +100,10 @@ fun HomeScreen(
                 )
             }
 
-            // Genre section
             GenreGrid(
-                genres = listOf(
-                    "أكشن", "كوميديا", "دراما", "رعب",
-                    "رومانسية", "خيال علمي", "مغامرة", "إثارة"
-                )
+                genres = listOf("أكشن", "كوميديا", "دراما", "رعب", "رومانسية", "خيال علمي", "مغامرة", "إثارة")
             )
-
-            // Padding for bottom navigation
-            Box(modifier = Modifier.padding(bottom = 56.dp))
+            Box(modifier = Modifier.padding(bottom = 16.dp))
         }
     }
 }

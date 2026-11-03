@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.cinemahub.app.data.repository.MovieRepositoryImpl
 import com.cinemahub.app.domain.model.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,17 +26,28 @@ class SearchViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private var searchJob: Job? = null
+
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
-        viewModelScope.launch {
-            if (query.isBlank()) {
-                _searchResults.value = emptyList()
-                return@launch
-            }
+        searchJob?.cancel()
+        if (query.isBlank()) {
+            _searchResults.value = emptyList()
+            _isLoading.value = false
+            return
+        }
+
+        searchJob = viewModelScope.launch {
             _isLoading.value = true
             try {
-                movieRepository.searchMovies(query.trim()).collect { _searchResults.value = it }
-            } finally {
+                movieRepository.searchMovies(query.trim()).collect { results ->
+                    _searchResults.value = results
+                    _isLoading.value = false
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _searchResults.value = emptyList()
                 _isLoading.value = false
             }
         }
