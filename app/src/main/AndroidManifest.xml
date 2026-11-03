@@ -21,7 +21,10 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="true"
+            android:resizeableActivity="true"
+            android:supportsPictureInPicture="true"
             android:theme="@style/Theme.CinemaHub">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
