@@ -20,4 +20,7 @@ interface WatchHistoryDao {
 
     @Query("SELECT * FROM watch_history WHERE itemId = :itemId AND itemType = :itemType LIMIT 1")
     fun getHistoryByItem(itemId: Int, itemType: String): Flow<WatchHistory?>
+
+    @Query("SELECT * FROM watch_history WHERE itemId = :itemId AND itemType = :itemType LIMIT 1")
+    suspend fun getHistoryByItemOnce(itemId: Int, itemType: String): WatchHistory?
 }

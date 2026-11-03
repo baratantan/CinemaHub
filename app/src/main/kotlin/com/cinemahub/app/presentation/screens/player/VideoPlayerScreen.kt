@@ -1,4 +1,4 @@
-package com.cinemahub.app.presentation.screens.player
+package com.cinemahub.app.presentation/screens/player
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Fullscreen
@@ -29,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,18 +41,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.cinemahub.app.presentation.viewmodel.WatchHistoryViewModel
 import com.cinemahub.app.ui.theme.BackgroundPrimary
 import com.cinemahub.app.ui.theme.PrimaryRed
 import kotlinx.coroutines.delay
 
 @OptIn(UnstableApi::class)
 @Composable
-fun VideoPlayerScreen(videoUrl: String, movieTitle: String = "", onBackClick: () -> Unit = {}) {
+fun VideoPlayerScreen(
+    videoUrl: String,
+    movieTitle: String = "",
+    movieId: Int = 0,
+    posterUrl: String = "",
+    onBackClick: () -> Unit = {},
+    historyViewModel: WatchHistoryViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
     val activity = context as? Activity
     var isPlaying by remember { mutableStateOf(false) }
@@ -60,14 +69,13 @@ fun VideoPlayerScreen(videoUrl: String, movieTitle: String = "", onBackClick: ()
     var isMuted by remember { mutableStateOf(false) }
     var currentPosition by remember { mutableLongStateOf(0L) }
     var duration by remember { mutableLongStateOf(0L) }
-
-    val player = remember(videoUrl) {
-        ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(videoUrl))
-            prepare()
-            playWhenReady = true
-        }
+    val history by historyViewModel.watchHistory.collectAsState()
+    val savedProgress = remember(history, movieId) {
+        history.firstOrNull { it.itemId == movieId && it.itemType == WatchHistoryViewModel.MOVIE_TYPE }
+            ?.progressInSeconds?.times(1_000L) ?: 0L
     }
+
+    val player = remember(videoUrl) { ExoPlayer.Builder(context).build() }
 
     DisposableEffect(player) {
         val listener = object : Player.Listener {
@@ -78,17 +86,39 @@ fun VideoPlayerScreen(videoUrl: String, movieTitle: String = "", onBackClick: ()
         }
         player.addListener(listener)
         onDispose {
+            if (movieId > 0 && videoUrl.isNotBlank()) {
+                historyViewModel.saveProgress(movieId, movieTitle, videoUrl, player.currentPosition, player.duration, posterUrl)
+            }
             player.removeListener(listener)
             player.release()
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
     }
 
-    LaunchedEffect(player) {
+    LaunchedEffect(player, videoUrl, movieId) {
+        if (videoUrl.isNotBlank()) {
+            player.setMediaItem(MediaItem.fromUri(videoUrl))
+            player.prepare()
+            if (movieId > 0 && savedProgress > 0) player.seekTo(savedProgress)
+            player.playWhenReady = true
+        }
+    }
+
+    LaunchedEffect(player, movieId, videoUrl) {
         while (true) {
             currentPosition = player.currentPosition.coerceAtLeast(0L)
             duration = player.duration.coerceAtLeast(0L)
-            delay(500)
+            if (player.isPlaying && movieId > 0 && videoUrl.isNotBlank()) {
+                historyViewModel.saveProgress(
+                    itemId = movieId,
+                    title = movieTitle,
+                    videoUrl = videoUrl,
+                    positionMillis = currentPosition,
+                    durationMillis = duration,
+                    posterUrl = posterUrl
+                )
+            }
+            delay(5_000)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.cinemahub.app.presentation.navigation
+package com.cinemahub.app.presentation/navigation
 
 import android.net.Uri
 import androidx.compose.foundation.layout.padding
@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.cinemahub.app.domain.model.WatchHistory
 import com.cinemahub.app.presentation.components.CinemaHubBottomNavigation
 import com.cinemahub.app.presentation.screens.FavoritesScreen
 import com.cinemahub.app.presentation.screens.HomeScreen
@@ -27,8 +28,11 @@ private object Routes {
     const val FAVORITES = "favorites"
     const val WATCH_HISTORY = "watch_history"
     const val MOVIE_DETAIL = "movie_detail/{movieId}"
-    const val VIDEO_PLAYER = "video_player?url={url}&title={title}"
+    const val VIDEO_PLAYER = "video_player?url={url}&title={title}&movieId={movieId}&poster={poster}"
 }
+
+private fun playerRoute(videoUrl: String, title: String, movieId: Int, posterUrl: String = ""): String =
+    "video_player?url=${Uri.encode(videoUrl)}&title=${Uri.encode(title)}&movieId=$movieId&poster=${Uri.encode(posterUrl)}"
 
 @Composable
 fun CinemaHubApp() {
@@ -40,85 +44,67 @@ fun CinemaHubApp() {
     Scaffold(
         bottomBar = {
             if (currentRoute in topLevelRoutes) {
-                CinemaHubBottomNavigation(
-                    currentRoute = currentRoute ?: Routes.HOME,
-                    onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                CinemaHubBottomNavigation(currentRoute ?: Routes.HOME) { route ->
+                    navController.navigate(route) {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                )
+                }
             }
         }
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Routes.HOME,
-            modifier = Modifier.padding(innerPadding)
-        ) {
+        NavHost(navController, startDestination = Routes.HOME, modifier = Modifier.padding(innerPadding)) {
             composable(Routes.HOME) {
                 HomeScreen(
-                    onMovieClick = { movieId -> navController.navigate("movie_detail/$movieId") },
+                    onMovieClick = { navController.navigate("movie_detail/$it") },
                     onSearchClick = { navController.navigate(Routes.SEARCH) }
                 )
             }
-
             composable(Routes.SEARCH) {
-                SearchScreen(
-                    onMovieClick = { movieId -> navController.navigate("movie_detail/$movieId") }
-                )
+                SearchScreen(onMovieClick = { navController.navigate("movie_detail/$it") })
             }
-
             composable(Routes.FAVORITES) {
-                FavoritesScreen(
-                    onItemClick = { itemId, itemType ->
-                        if (itemType == "MOVIE") navController.navigate("movie_detail/$itemId")
-                    }
-                )
+                FavoritesScreen { itemId, itemType ->
+                    if (itemType == "MOVIE") navController.navigate("movie_detail/$itemId")
+                }
             }
-
             composable(Routes.WATCH_HISTORY) {
-                WatchHistoryScreen(
-                    onItemClick = { itemId -> navController.navigate("movie_detail/$itemId") }
-                )
+                WatchHistoryScreen { item ->
+                    if (item.videoUrl.isNotBlank()) {
+                        navController.navigate(playerRoute(item.videoUrl, item.title, item.itemId, item.posterUrl))
+                    } else {
+                        navController.navigate("movie_detail/${item.itemId}")
+                    }
+                }
             }
-
             composable(
-                route = Routes.MOVIE_DETAIL,
+                Routes.MOVIE_DETAIL,
                 arguments = listOf(navArgument("movieId") { type = NavType.IntType })
             ) { entry ->
                 val movieId = entry.arguments?.getInt("movieId") ?: return@composable
                 MovieDetailScreen(
                     movieId = movieId,
                     onBackClick = { navController.popBackStack() },
-                    onPlayClick = { videoUrl, movieTitle ->
-                        navController.navigate(
-                            "video_player?url=${Uri.encode(videoUrl)}&title=${Uri.encode(movieTitle)}"
-                        )
+                    onPlayClick = { videoUrl, title ->
+                        navController.navigate(playerRoute(videoUrl, title, movieId))
                     }
                 )
             }
-
             composable(
-                route = Routes.VIDEO_PLAYER,
+                Routes.VIDEO_PLAYER,
                 arguments = listOf(
-                    navArgument("url") {
-                        type = NavType.StringType
-                        defaultValue = ""
-                    },
-                    navArgument("title") {
-                        type = NavType.StringType
-                        defaultValue = ""
-                    }
+                    navArgument("url") { type = NavType.StringType; defaultValue = "" },
+                    navArgument("title") { type = NavType.StringType; defaultValue = "" },
+                    navArgument("movieId") { type = NavType.IntType; defaultValue = 0 },
+                    navArgument("poster") { type = NavType.StringType; defaultValue = "" }
                 )
             ) { entry ->
                 VideoPlayerScreen(
                     videoUrl = entry.arguments?.getString("url").orEmpty(),
                     movieTitle = entry.arguments?.getString("title").orEmpty(),
+                    movieId = entry.arguments?.getInt("movieId") ?: 0,
+                    posterUrl = entry.arguments?.getString("poster").orEmpty(),
                     onBackClick = { navController.popBackStack() }
                 )
             }
