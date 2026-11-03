@@ -106,7 +106,7 @@
     </style>
 
     <!-- Base custom widget style, used by all CinemaHub widget styles. -->
-    <style name="Widget.CinemaHub" />
+<style name="Widget.CinemaHub" parent=""/>
 
     <!-- Button Styles -->
     <style name="Widget.CinemaHub.Button" parent="@android:style/Widget.Button">
