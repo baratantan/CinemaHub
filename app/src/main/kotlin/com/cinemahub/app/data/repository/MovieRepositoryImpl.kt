@@ -1,12 +1,13 @@
 package com.cinemahub.app.data.repository
 
-import com.cinemahub.app.data.local.dao.MovieDao
 import com.cinemahub.app.data.local.dao.FavoriteDao
+import com.cinemahub.app.data.local.dao.MovieDao
 import com.cinemahub.app.data.network.scraper.ScrapedVideoLink
 import com.cinemahub.app.data.network.scraper.VideoScraper
-import com.cinemahub.app.domain.model.Movie
 import com.cinemahub.app.domain.model.Favorite
+import com.cinemahub.app.domain.model.Movie
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -23,14 +24,15 @@ class MovieRepositoryImpl @Inject constructor(
     suspend fun insertMovie(movie: Movie) = movieDao.insertMovie(movie)
 
     suspend fun addToFavorites(movie: Movie) {
-        val favorite = Favorite(
-            id = movie.id,
-            title = movie.title,
-            posterUrl = movie.posterUrl,
-            itemType = "MOVIE",
-            addedAt = System.currentTimeMillis()
+        favoriteDao.addFavorite(
+            Favorite(
+                id = movie.id,
+                title = movie.title,
+                posterUrl = movie.posterUrl,
+                itemType = "MOVIE",
+                addedAt = System.currentTimeMillis()
+            )
         )
-        favoriteDao.addFavorite(favorite)
     }
 
     suspend fun removeFromFavorites(movieId: Int) {
@@ -39,35 +41,18 @@ class MovieRepositoryImpl @Inject constructor(
 
     fun isFavorite(movieId: Int): Flow<Boolean> = favoriteDao.isFavorite(movieId)
 
-    /**
-     * الحصول على روابط الفيديو من موقع ويب معين
-     */
-    suspend fun scrapeVideoLinks(pageUrl: String): List<ScrapedVideoLink> {
-        return videoScraper.scrapeVideoLinks(pageUrl)
-    }
+    suspend fun scrapeVideoLinks(pageUrl: String): List<ScrapedVideoLink> =
+        videoScraper.scrapeVideoLinks(pageUrl)
 
-    /**
-     * الحصول على روابط الفيديو من سيرفرات متعددة
-     */
-    suspend fun scrapeMultipleServers(pageUrl: String): Map<String, List<ScrapedVideoLink>> {
-        return videoScraper.scrapeMultipleServers(pageUrl)
-    }
+    suspend fun scrapeMultipleServers(pageUrl: String): Map<String, List<ScrapedVideoLink>> =
+        videoScraper.scrapeMultipleServers(pageUrl)
 
-    /**
-     * الحصول على روابط الفيديو من JSON داخل السكريبت
-     */
-    suspend fun scrapeFromJsonScript(pageUrl: String): List<ScrapedVideoLink> {
-        return videoScraper.scrapeFromJsonScript(pageUrl)
-    }
+    suspend fun scrapeFromJsonScript(pageUrl: String): List<ScrapedVideoLink> =
+        videoScraper.scrapeFromJsonScript(pageUrl)
 
-    /**
-     * تحديث رابط الفيديو للفيلم
-     */
     suspend fun updateMovieVideoUrl(movieId: Int, videoUrl: String) {
-        val movie = movieDao.getMovie(movieId).collect { currentMovie ->
-            currentMovie?.let {
-                movieDao.updateMovie(it.copy(videoUrl = videoUrl))
-            }
+        movieDao.getMovie(movieId).firstOrNull()?.let { movie ->
+            movieDao.updateMovie(movie.copy(videoUrl = videoUrl))
         }
     }
 }
