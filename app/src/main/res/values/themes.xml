@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base Application Theme -->
-    <style name="Base.Theme.CinemaHub" parent="android:Theme.Material">
+    <style name="Base.Theme.CinemaHub" parent="@android:style/Theme.Material">
         <!-- Primary brand color -->
         <item name="android:colorPrimary">@color/primary_red</item>
         <item name="android:colorPrimaryDark">@color/primary_red_dark</item>
@@ -26,13 +26,12 @@
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:textColorTertiary">@color/text_tertiary</item>
-
     </style>
 
     <style name="Theme.CinemaHub" parent="Base.Theme.CinemaHub" />
 
     <!-- Text Styles -->
-    <style name="TextAppearance.CinemaHub" parent="android:TextAppearance">
+    <style name="TextAppearance.CinemaHub" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/text_primary</item>
     </style>
 
@@ -106,8 +105,11 @@
         <item name="android:textColor">@color/text_secondary</item>
     </style>
 
+    <!-- Base custom widget style, used by all CinemaHub widget styles. -->
+    <style name="Widget.CinemaHub" />
+
     <!-- Button Styles -->
-    <style name="Widget.CinemaHub.Button" parent="android:Widget.Button">
+    <style name="Widget.CinemaHub.Button" parent="@android:style/Widget.Button">
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:background">@color/button_enabled</item>
         <item name="android:padding">12dp</item>
@@ -125,7 +127,7 @@
     </style>
 
     <!-- EditText Styles -->
-    <style name="Widget.CinemaHub.EditText" parent="android:Widget.EditText">
+    <style name="Widget.CinemaHub.EditText" parent="@android:style/Widget.EditText">
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textColorHint">@color/text_tertiary</item>
         <item name="android:background">@drawable/edittext_background</item>
@@ -145,7 +147,7 @@
     </style>
 
     <!-- Progress Bar -->
-    <style name="Widget.CinemaHub.ProgressBar" parent="android:Widget.ProgressBar.Horizontal">
+    <style name="Widget.CinemaHub.ProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progressbar_drawable</item>
     </style>
 
@@ -157,7 +159,7 @@
     </style>
 
     <!-- Dialog Styles -->
-    <style name="AlertDialog.CinemaHub" parent="android:Theme.Material.Dialog.Alert">
+    <style name="AlertDialog.CinemaHub" parent="@android:style/Theme.Material.Dialog.Alert">
         <item name="android:windowBackground">@color/background_secondary</item>
         <item name="android:textColorPrimary">@color/text_primary</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
@@ -165,13 +167,13 @@
     </style>
 
     <!-- Popup Menu -->
-    <style name="PopupMenu.CinemaHub" parent="android:Theme.Material">
+    <style name="PopupMenu.CinemaHub" parent="@android:style/Theme.Material">
         <item name="android:windowBackground">@color/background_secondary</item>
         <item name="android:textColor">@color/text_primary</item>
     </style>
 
     <!-- Toolbar -->
-    <style name="Widget.CinemaHub.ToolBar" parent="android:Widget.Holo.Light.ActionBar">
+    <style name="Widget.CinemaHub.ToolBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/background_secondary</item>
         <item name="android:elevation">4dp</item>
     </style>
