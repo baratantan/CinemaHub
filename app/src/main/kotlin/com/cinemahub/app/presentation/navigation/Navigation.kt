@@ -1,4 +1,4 @@
-package com.cinemahub.app.presentation/navigation
+package com.cinemahub.app.presentation.navigation
 
 import android.net.Uri
 import androidx.compose.foundation.layout.padding
@@ -13,7 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.cinemahub.app.domain.model.WatchHistory
 import com.cinemahub.app.presentation.components.CinemaHubBottomNavigation
 import com.cinemahub.app.presentation.screens.FavoritesScreen
 import com.cinemahub.app.presentation.screens.HomeScreen
