@@ -36,7 +36,6 @@ class SearchViewModel @Inject constructor(
             _isLoading.value = false
             return
         }
-
         searchJob = viewModelScope.launch {
             _isLoading.value = true
             try {

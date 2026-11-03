@@ -15,15 +15,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val movieRepository: MovieRepositoryImpl
 ) : ViewModel() {
-
-    private val _featuredMovies = MutableStateFlow<List<Movie>>(emptyList())
-    val featuredMovies: StateFlow<List<Movie>> = _featuredMovies.asStateFlow()
-
-    private val _latestMovies = MutableStateFlow<List<Movie>>(emptyList())
-    val latestMovies: StateFlow<List<Movie>> = _latestMovies.asStateFlow()
-
-    private val _animeMovies = MutableStateFlow<List<Movie>>(emptyList())
-    val animeMovies: StateFlow<List<Movie>> = _animeMovies.asStateFlow()
+    private val _allMovies = MutableStateFlow<List<Movie>>(emptyList())
+    val allMovies: StateFlow<List<Movie>> = _allMovies.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -31,41 +24,22 @@ class HomeViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    init {
-        loadMovies()
-    }
+    init { loadMovies() }
 
     private fun loadMovies() {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
-
             try {
-                movieRepository.getAllMovies().collect { movies ->
-                    _featuredMovies.value = movies.take(5)
-                    _latestMovies.value = movies.takeLast(10)
-                    // تصفية أفلام الأنمي (يمكن إضافة حقل genre للتمييز)
-                    _animeMovies.value = movies.filter {
-                        it.genre.contains("أنمي") || it.title.contains("أنمي")
-                    }
-                }
+                movieRepository.getAllMovies().collect { _allMovies.value = it }
             } catch (e: Exception) {
-                _errorMessage.value = "خطأ في تحميل الأفلام: ${e.message}"
-                e.printStackTrace()
+                _errorMessage.value = "تعذر تحميل الأفلام. حاول مرة أخرى."
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    /**
-     * إعادة تحميل قائمة الأفلام
-     */
-    fun refreshMovies() {
-        loadMovies()
-    }
-
-    fun clearError() {
-        _errorMessage.value = null
-    }
+    fun refreshMovies() = loadMovies()
+    fun clearError() { _errorMessage.value = null }
 }
