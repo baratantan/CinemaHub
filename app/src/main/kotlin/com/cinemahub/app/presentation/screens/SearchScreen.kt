@@ -1,4 +1,4 @@
-package com.cinemahub.app.presentation/screens
+package com.cinemahub.app.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
