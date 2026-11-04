@@ -30,10 +30,14 @@ android {
             .replace("\\", "\\\\").replace("\"", "\\\"")
         val tmdbApiKey = providers.gradleProperty("TMDB_API_KEY").orElse("").get()
             .replace("\\", "\\\\").replace("\"", "\\\"")
+        val firebaseStreamsCollection = providers.gradleProperty("FIREBASE_STREAMS_COLLECTION")
+            .orElse("approvedStreams").get()
+            .replace("\\", "\\\\").replace("\"", "\\\"")
         buildConfigField("String", "FIREBASE_API_KEY", "\"$firebaseApiKey\"")
         buildConfigField("String", "FIREBASE_APP_ID", "\"$firebaseAppId\"")
         buildConfigField("String", "FIREBASE_PROJECT_ID", "\"$firebaseProjectId\"")
         buildConfigField("String", "TMDB_API_KEY", "\"$tmdbApiKey\"")
+        buildConfigField("String", "FIREBASE_STREAMS_COLLECTION", "\"$firebaseStreamsCollection\"")
     }
 
     buildTypes {

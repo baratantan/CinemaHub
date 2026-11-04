@@ -1,8 +1,6 @@
 package com.cinemahub.app.di
 
-import com.cinemahub.app.BuildConfig
 import com.cinemahub.app.data.network.client.KtorHttpClient
-import com.cinemahub.app.data.network.scraper.VideoScraper
 import com.cinemahub.app.data.network.tmdb.TmdbApiService
 import dagger.Module
 import dagger.Provides
@@ -19,10 +17,6 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideKtorHttpClient(): KtorHttpClient = KtorHttpClient()
-
-    @Singleton
-    @Provides
-    fun provideVideoScraper(): VideoScraper = VideoScraper()
 
     @Singleton
     @Provides
