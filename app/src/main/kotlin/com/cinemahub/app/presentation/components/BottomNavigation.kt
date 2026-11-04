@@ -1,17 +1,13 @@
 package com.cinemahub.app.presentation.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -43,13 +39,12 @@ fun CinemaHubBottomNavigation(
         BottomNavItem("الرئيسية", Icons.Filled.Home, "home"),
         BottomNavItem("بحث", Icons.Filled.Search, "search"),
         BottomNavItem("المفضلة", Icons.Filled.Favorite, "favorites"),
-        BottomNavItem("المشاهدة", Icons.Filled.History, "watch_history")
+        BottomNavItem("المشاهدة", Icons.Filled.History, "watch_history"),
+        BottomNavItem("الإعدادات", Icons.Filled.Settings, "settings")
     )
 
     NavigationBar(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
+        modifier = Modifier.fillMaxWidth().height(68.dp),
         containerColor = BackgroundSecondary,
         contentColor = TextPrimary
     ) {
@@ -61,15 +56,10 @@ fun CinemaHubBottomNavigation(
                     Icon(
                         imageVector = item.icon,
                         contentDescription = item.label,
-                        modifier = Modifier.height(24.dp)
+                        modifier = Modifier.height(22.dp)
                     )
                 },
-                label = {
-                    Text(
-                        text = item.label,
-                        fontSize = 10.sp
-                    )
-                },
+                label = { Text(text = item.label, fontSize = 9.sp, maxLines = 1) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = PrimaryRed,
                     selectedTextColor = PrimaryRed,

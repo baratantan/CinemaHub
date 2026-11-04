@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,11 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,7 +43,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,7 +73,8 @@ fun HomeScreen(
     watchHistoryViewModel: WatchHistoryViewModel = hiltViewModel(),
     onMovieClick: (Int) -> Unit = {},
     onContinueWatching: (WatchHistory) -> Unit = {},
-    onSearchClick: () -> Unit = {}
+    onSearchClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {}
 ) {
     val allMovies by viewModel.allMovies.collectAsState()
     val trendingMovies by viewModel.trendingMovies.collectAsState()
@@ -139,8 +142,11 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text("CinemaHub", color = PrimaryRed, fontSize = 25.sp, fontWeight = FontWeight.ExtraBold)
-                    Text("اكتشف ما يستحق المشاهدة", color = TextSecondary, fontSize = 12.sp)
+                    Text("CinemaHub", color = PrimaryRed, fontSize = 27.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("ليلتك تبدأ بفيلم يستحق المشاهدة", color = TextSecondary, fontSize = 12.sp)
+                }
+                IconButton(onClick = onSettingsClick) {
+                    Icon(Icons.Filled.Settings, contentDescription = "الإعدادات", tint = TextSecondary)
                 }
                 IconButton(onClick = { showFilters = true }) {
                     Icon(Icons.Filled.FilterList, contentDescription = "تصفية المحتوى", tint = TextPrimary)
@@ -149,17 +155,17 @@ fun HomeScreen(
         }
         item {
             Surface(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp)
-                    .clip(RoundedCornerShape(16.dp)).clickable(onClick = onSearchClick),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)
+                    .clip(RoundedCornerShape(18.dp)).clickable(onClick = onSearchClick),
                 color = BackgroundTertiary,
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(18.dp)
             ) {
                 Row(
-                    Modifier.fillMaxWidth().height(54.dp).padding(horizontal = 16.dp),
+                    Modifier.fillMaxWidth().height(58.dp).padding(horizontal = 18.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Filled.Search, contentDescription = null, tint = TextSecondary)
-                    Text("ابحث عن فيلم أو مسلسل...", color = TextSecondary, modifier = Modifier.padding(start = 12.dp))
+                    Text("ابحث عن فيلم أو مسلسل...", color = TextSecondary, modifier = Modifier.padding(start = 12.dp), fontSize = 15.sp)
                 }
             }
         }
@@ -180,10 +186,7 @@ fun HomeScreen(
         }
         if (featured != null) {
             item {
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn() + slideInVertically(initialOffsetY = { it / 8 })
-                ) {
+                AnimatedVisibility(visible = true, enter = fadeIn() + slideInVertically(initialOffsetY = { it / 8 })) {
                     Column(Modifier.fillMaxWidth().padding(top = 14.dp)) {
                         Text(
                             "اختيار اليوم",
@@ -204,30 +207,43 @@ fun HomeScreen(
             }
         }
         if (continueItems.isNotEmpty()) {
-            item {
-                ContinueWatchingSection(items = continueItems, onItemClick = onContinueWatching)
-            }
+            item { ContinueWatchingSection(items = continueItems, onItemClick = onContinueWatching) }
         }
         if (isLoading && trendingMovies.isEmpty() && latestSeries.isEmpty() && anime.isEmpty()) {
             item {
-                Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+                Box(Modifier.fillMaxWidth().padding(40.dp), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = PrimaryRed)
                 }
             }
+        } else if (errorMessage != null && visibleTrending.isEmpty() && visibleSeries.isEmpty() && visibleAnime.isEmpty() && featured == null) {
+            item {
+                Surface(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 28.dp),
+                    color = BackgroundSecondary,
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 28.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(Icons.Filled.CloudOff, contentDescription = null, tint = TextSecondary, modifier = Modifier.padding(bottom = 12.dp))
+                        Text("تعذر تحميل المحتوى", color = TextPrimary, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Text(errorMessage.orEmpty(), color = TextSecondary, modifier = Modifier.padding(top = 8.dp), fontSize = 14.sp)
+                        TextButton(onClick = { viewModel.refreshMovies() }, modifier = Modifier.padding(top = 8.dp)) {
+                            Icon(Icons.Filled.Refresh, contentDescription = null, tint = PrimaryRed)
+                            Text("حاول مجدداً", color = PrimaryRed, modifier = Modifier.padding(start = 6.dp))
+                        }
+                    }
+                }
+            }
         } else {
-            item {
-                MovieSection(title = "الأفلام الرائجة", movies = visibleTrending, onMovieClick = { onMovieClick(it.id) })
-            }
-            item {
-                MovieSection(title = "أحدث المسلسلات", movies = visibleSeries, isItemClickable = false)
-            }
-            item {
-                MovieSection(title = "الأنمي", movies = visibleAnime, isItemClickable = false)
-            }
-            if (errorMessage != null && visibleTrending.isEmpty() && visibleSeries.isEmpty() && visibleAnime.isEmpty()) {
+            item { MovieSection(title = "الأفلام الرائجة", movies = visibleTrending, onMovieClick = { onMovieClick(it.id) }) }
+            item { MovieSection(title = "أحدث المسلسلات", movies = visibleSeries, isItemClickable = false) }
+            item { MovieSection(title = "الأنمي", movies = visibleAnime, isItemClickable = false) }
+            if (errorMessage != null && featured == null) {
                 item { Text(errorMessage.orEmpty(), color = TextSecondary, modifier = Modifier.padding(24.dp)) }
             }
         }
-        item { Box(Modifier.padding(bottom = 24.dp)) }
+        item { Spacer(Modifier.height(24.dp)) }
     }
 }

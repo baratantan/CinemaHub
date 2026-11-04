@@ -18,6 +18,7 @@ import com.cinemahub.app.presentation.screens.FavoritesScreen
 import com.cinemahub.app.presentation.screens.HomeScreen
 import com.cinemahub.app.presentation.screens.MovieDetailScreen
 import com.cinemahub.app.presentation.screens.SearchScreen
+import com.cinemahub.app.presentation.screens.SettingsScreen
 import com.cinemahub.app.presentation.screens.WatchHistoryScreen
 import com.cinemahub.app.presentation.screens.player.VideoPlayerScreen
 
@@ -26,6 +27,7 @@ private object Routes {
     const val SEARCH = "search"
     const val FAVORITES = "favorites"
     const val WATCH_HISTORY = "watch_history"
+    const val SETTINGS = "settings"
     const val MOVIE_DETAIL = "movie_detail/{movieId}"
     const val VIDEO_PLAYER = "video_player?url={url}&title={title}&movieId={movieId}&poster={poster}"
 }
@@ -38,7 +40,7 @@ fun CinemaHubApp() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
-    val topLevelRoutes = setOf(Routes.HOME, Routes.SEARCH, Routes.FAVORITES, Routes.WATCH_HISTORY)
+    val topLevelRoutes = setOf(Routes.HOME, Routes.SEARCH, Routes.FAVORITES, Routes.WATCH_HISTORY, Routes.SETTINGS)
 
     Scaffold(
         bottomBar = {
@@ -60,7 +62,8 @@ fun CinemaHubApp() {
                     onContinueWatching = { item ->
                         navController.navigate(playerRoute(item.videoUrl, item.title, item.itemId, item.posterUrl))
                     },
-                    onSearchClick = { navController.navigate(Routes.SEARCH) }
+                    onSearchClick = { navController.navigate(Routes.SEARCH) },
+                    onSettingsClick = { navController.navigate(Routes.SETTINGS) }
                 )
             }
             composable(Routes.SEARCH) {
@@ -80,6 +83,7 @@ fun CinemaHubApp() {
                     }
                 }
             }
+            composable(Routes.SETTINGS) { SettingsScreen() }
             composable(
                 Routes.MOVIE_DETAIL,
                 arguments = listOf(navArgument("movieId") { type = NavType.IntType })

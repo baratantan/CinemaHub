@@ -3,8 +3,14 @@ package com.cinemahub.app.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import com.cinemahub.app.data.preferences.AppSettings
+import com.cinemahub.app.data.preferences.CinemaHubPreferences
 
 private val DarkColorScheme = darkColorScheme(
     primary = Color(0xFFE50914),
@@ -37,12 +43,40 @@ private val DarkColorScheme = darkColorScheme(
     inversePrimary = Color(0xFFE50914),
 )
 
+private val LightColorScheme = lightColorScheme(
+    primary = Color(0xFFBE0710),
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFFFFDADB),
+    onPrimaryContainer = Color(0xFF410004),
+    secondary = Color(0xFF565F70),
+    onSecondary = Color.White,
+    tertiary = Color(0xFF775A00),
+    onTertiary = Color.White,
+    error = Color(0xFFBA1A1A),
+    onError = Color.White,
+    background = Color(0xFFF8F7F7),
+    onBackground = Color(0xFF1B1B1F),
+    surface = Color(0xFFFFFFFF),
+    onSurface = Color(0xFF1B1B1F),
+    surfaceVariant = Color(0xFFE9E1E1),
+    onSurfaceVariant = Color(0xFF49454F),
+    outline = Color(0xFF79747E),
+    outlineVariant = Color(0xFFCAC4D0),
+    scrim = Color.Black,
+    inverseSurface = Color(0xFF303034),
+    inverseOnSurface = Color(0xFFF2F0F4),
+    inversePrimary = Color(0xFFFFB3B5),
+)
+
 @Composable
 fun CinemaHubTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean? = null,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = DarkColorScheme
+    val context = LocalContext.current
+    val settings by CinemaHubPreferences.observe(context).collectAsState(initial = AppSettings())
+    val useDarkTheme = darkTheme ?: settings.isDarkTheme
+    val colorScheme = if (useDarkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
