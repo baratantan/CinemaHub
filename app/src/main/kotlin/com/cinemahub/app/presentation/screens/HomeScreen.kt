@@ -1,7 +1,11 @@
-package com.cinemahub.app.presentation/components
+package com.cinemahub.app.presentation.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,18 +13,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,12 +45,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cinemahub.app.domain.model.Movie
+import com.cinemahub.app.domain.model.WatchHistory
+import com.cinemahub.app.presentation.components.ContinueWatchingSection
 import com.cinemahub.app.presentation.components.FeaturedMovieCard
 import com.cinemahub.app.presentation.components.MovieFilterPanel
-import com.cinemahub.app.presentation.components.MovieSortOrder
 import com.cinemahub.app.presentation.components.MovieSection
+import com.cinemahub.app.presentation.components.MovieSortOrder
 import com.cinemahub.app.presentation.components.filterAndSortMovies
 import com.cinemahub.app.presentation.viewmodel.HomeViewModel
+import com.cinemahub.app.presentation.viewmodel.WatchHistoryViewModel
 import com.cinemahub.app.ui.theme.BackgroundPrimary
 import com.cinemahub.app.ui.theme.BackgroundSecondary
 import com.cinemahub.app.ui.theme.BackgroundTertiary
@@ -53,16 +61,21 @@ import com.cinemahub.app.ui.theme.PrimaryRed
 import com.cinemahub.app.ui.theme.TextPrimary
 import com.cinemahub.app.ui.theme.TextSecondary
 
+private val homeGenres = listOf("الكل", "أكشن", "دراما", "كوميديا", "إثارة", "رعب", "خيال علمي", "أنمي")
+
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
+    watchHistoryViewModel: WatchHistoryViewModel = hiltViewModel(),
     onMovieClick: (Int) -> Unit = {},
+    onContinueWatching: (WatchHistory) -> Unit = {},
     onSearchClick: () -> Unit = {}
 ) {
     val allMovies by viewModel.allMovies.collectAsState()
     val trendingMovies by viewModel.trendingMovies.collectAsState()
     val latestSeries by viewModel.latestSeries.collectAsState()
     val anime by viewModel.anime.collectAsState()
+    val watchHistory by watchHistoryViewModel.watchHistory.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
 
@@ -81,7 +94,10 @@ fun HomeScreen(
     val visibleAnime = remember(anime, selectedGenre, year, minimumRating, sortOrder) {
         filterAndSortMovies(anime, selectedGenre, year, minimumRating, sortOrder)
     }
-    val featured = visibleTrending.firstOrNull() ?: allMovies.maxByOrNull { it.rating }
+    val featured: Movie? = visibleTrending.firstOrNull() ?: allMovies.maxByOrNull { it.rating }
+    val continueItems = remember(watchHistory) {
+        watchHistory.filter { it.progressInSeconds > 0 && it.videoUrl.isNotBlank() }
+    }
 
     if (showFilters) {
         AlertDialog(
@@ -105,16 +121,15 @@ fun HomeScreen(
                     }
                 )
             },
-            confirmButton = {
-                TextButton(onClick = { showFilters = false }) { Text("تم", color = PrimaryRed) }
-            },
+            confirmButton = { TextButton(onClick = { showFilters = false }) { Text("تم", color = PrimaryRed) } },
             containerColor = BackgroundSecondary
         )
     }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().background(BackgroundPrimary),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         item {
             Row(
@@ -146,19 +161,49 @@ fun HomeScreen(
                 }
             }
         }
-        if (featured != null) {
-            item {
-                Column(Modifier.fillMaxWidth().padding(top = 12.dp)) {
-                    Text("اختيار اليوم", color = TextPrimary, fontSize = 19.sp, fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp))
-                    FeaturedMovieCard(
-                        title = featured.title,
-                        description = featured.description,
-                        backdropUrl = featured.backdropUrl,
-                        rating = featured.rating,
-                        onClick = { onMovieClick(featured.id) }
+        item {
+            LazyRow(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(homeGenres) { genre ->
+                    FilterChip(
+                        selected = selectedGenre == genre,
+                        onClick = { selectedGenre = genre },
+                        label = { Text(genre) },
+                        modifier = Modifier.padding(start = if (genre == homeGenres.first()) 16.dp else 0.dp)
                     )
                 }
+            }
+        }
+        if (featured != null) {
+            item {
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn() + slideInVertically(initialOffsetY = { it / 8 })
+                ) {
+                    Column(Modifier.fillMaxWidth().padding(top = 14.dp)) {
+                        Text(
+                            "اختيار اليوم",
+                            color = TextPrimary,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                        )
+                        FeaturedMovieCard(
+                            title = featured.title,
+                            description = featured.description,
+                            backdropUrl = featured.backdropUrl,
+                            rating = featured.rating,
+                            onClick = { onMovieClick(featured.id) }
+                        )
+                    }
+                }
+            }
+        }
+        if (continueItems.isNotEmpty()) {
+            item {
+                ContinueWatchingSection(items = continueItems, onItemClick = onContinueWatching)
             }
         }
         if (isLoading && trendingMovies.isEmpty() && latestSeries.isEmpty() && anime.isEmpty()) {
@@ -169,30 +214,16 @@ fun HomeScreen(
             }
         } else {
             item {
-                MovieSection(
-                    title = "الأفلام الرائجة",
-                    movies = visibleTrending,
-                    onMovieClick = { onMovieClick(it.id) }
-                )
+                MovieSection(title = "الأفلام الرائجة", movies = visibleTrending, onMovieClick = { onMovieClick(it.id) })
             }
             item {
-                MovieSection(
-                    title = "أحدث المسلسلات",
-                    movies = visibleSeries,
-                    isItemClickable = false
-                )
+                MovieSection(title = "أحدث المسلسلات", movies = visibleSeries, isItemClickable = false)
             }
             item {
-                MovieSection(
-                    title = "الأنمي",
-                    movies = visibleAnime,
-                    isItemClickable = false
-                )
+                MovieSection(title = "الأنمي", movies = visibleAnime, isItemClickable = false)
             }
             if (errorMessage != null && visibleTrending.isEmpty() && visibleSeries.isEmpty() && visibleAnime.isEmpty()) {
-                item {
-                    Text(errorMessage.orEmpty(), color = TextSecondary, modifier = Modifier.padding(24.dp))
-                }
+                item { Text(errorMessage.orEmpty(), color = TextSecondary, modifier = Modifier.padding(24.dp)) }
             }
         }
         item { Box(Modifier.padding(bottom = 24.dp)) }

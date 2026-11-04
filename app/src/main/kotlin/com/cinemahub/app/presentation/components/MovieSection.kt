@@ -1,13 +1,12 @@
 package com.cinemahub.app.presentation.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -29,12 +28,9 @@ fun MovieSection(
     if (movies.isEmpty()) return
     Column(Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
         Text(title, color = TextPrimary, fontSize = 20.sp, modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp))
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(movies, key = { "${title}_${it.id}" }) { movie ->
-                Box(Modifier.fillMaxWidth(0.5f).height(250.dp)) {
+                Column(Modifier.width(158.dp).height(288.dp)) {
                     MovieCard(
                         title = movie.title,
                         posterUrl = movie.posterUrl,
