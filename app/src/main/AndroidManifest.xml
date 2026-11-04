@@ -25,7 +25,7 @@
             android:exported="true"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
-            android:theme="@style/Theme.CinemaHub">
+            android:theme="@style/Theme.CinemaHub.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

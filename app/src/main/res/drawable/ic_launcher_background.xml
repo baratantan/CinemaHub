@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="12"
+                android:startY="0"
+                android:endX="96"
+                android:endY="108">
+                <item android:offset="0" android:color="#FF35111D" />
+                <item android:offset="0.52" android:color="#FF121A31" />
+                <item android:offset="1" android:color="#FF070B14" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Panoramic cinematic beams and a subtle horizon. -->
+    <path android:fillColor="#24FFFFFF" android:pathData="M42,0L67,0L91,75L73,75Z" />
+    <path android:fillColor="#18E50914" android:pathData="M22,0L37,0L55,76L43,76Z" />
+    <path android:fillColor="#FF171B29" android:pathData="M0,74L108,74L108,108L0,108Z" />
+    <path android:fillColor="#FF24283A" android:pathData="M0,82L14,82L14,108L0,108Z" />
+    <path android:fillColor="#FF202538" android:pathData="M21,88L31,88L31,108L21,108Z" />
+    <path android:fillColor="#FF252A3D" android:pathData="M91,80L108,80L108,108L91,108Z" />
+    <path android:fillColor="#FF1D2234" android:pathData="M78,91L87,91L87,108L78,108Z" />
+    <path android:fillColor="#55E50914" android:pathData="M0,73L108,73L108,76L0,76Z" />
+</vector>
