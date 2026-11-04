@@ -5,6 +5,7 @@ import com.cinemahub.app.data.local.dao.FavoriteDao
 import com.cinemahub.app.data.local.dao.MovieDao
 import com.cinemahub.app.data.network.tmdb.TmdbApiService
 import com.cinemahub.app.data.network.tmdb.TmdbMovieResult
+import com.cinemahub.app.data.network.tmdb.TmdbTvResult
 import com.cinemahub.app.domain.model.Favorite
 import com.cinemahub.app.domain.model.Movie
 import kotlinx.coroutines.flow.Flow
@@ -21,14 +22,28 @@ class MovieRepositoryImpl @Inject constructor(
         val cachedMovies = movieDao.getAllMovies().firstOrNull().orEmpty()
         emit(cachedMovies)
 
-        val apiKey = requireTmdbApiKey()
-        val remoteMovies = tmdbApiService.getPopularMovies(apiKey = apiKey).results
+        val remoteMovies = tmdbApiService.getPopularMovies(apiKey = requireTmdbApiKey()).results
             .map(TmdbMovieResult::toMovie)
             .filter { it.id > 0 && it.title.isNotBlank() }
-
         remoteMovies.forEach { movieDao.insertMovie(it) }
         emit(remoteMovies)
     }
+
+    suspend fun fetchTrendingMovies(): List<Movie> = tmdbApiService
+        .getTrendingMovies(apiKey = requireTmdbApiKey())
+        .results.map(TmdbMovieResult::toMovie)
+        .filter { it.id > 0 && it.title.isNotBlank() }
+        .also { movies -> movies.forEach { movieDao.insertMovie(it) } }
+
+    suspend fun fetchLatestSeries(): List<Movie> = tmdbApiService
+        .getLatestSeries(apiKey = requireTmdbApiKey())
+        .results.map(TmdbTvResult::toCatalogMovie)
+        .filter { it.id > 0 && it.title.isNotBlank() }
+
+    suspend fun fetchAnime(): List<Movie> = tmdbApiService
+        .getAnimeSeries(apiKey = requireTmdbApiKey())
+        .results.map(TmdbTvResult::toCatalogMovie)
+        .filter { it.id > 0 && it.title.isNotBlank() }
 
     fun getMovie(movieId: Int): Flow<Movie?> = movieDao.getMovie(movieId)
 
@@ -40,14 +55,11 @@ class MovieRepositoryImpl @Inject constructor(
         }
 
         emit(movieDao.searchMovies(normalizedQuery).firstOrNull().orEmpty())
-
         val remoteMovies = tmdbApiService.searchMovies(
             apiKey = requireTmdbApiKey(),
             query = normalizedQuery
-        ).results
-            .map(TmdbMovieResult::toMovie)
+        ).results.map(TmdbMovieResult::toMovie)
             .filter { it.id > 0 && it.title.isNotBlank() }
-
         remoteMovies.forEach { movieDao.insertMovie(it) }
         emit(remoteMovies)
     }

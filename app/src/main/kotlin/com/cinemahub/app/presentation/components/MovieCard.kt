@@ -34,22 +34,20 @@ fun MovieCard(
     rating: Double,
     isFavorite: Boolean = false,
     onFavoriteClick: () -> Unit = {},
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    clickEnabled: Boolean = true
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .then(if (clickEnabled) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(8.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
-                .background(
-                    color = Color(0xFF2A2A2A),
-                    shape = RoundedCornerShape(12.dp)
-                )
+                .background(color = Color(0xFF2A2A2A), shape = RoundedCornerShape(12.dp))
         ) {
             AsyncImage(
                 model = posterUrl,
@@ -57,25 +55,14 @@ fun MovieCard(
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
-
-            // Gradient overlay
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
                     .height(60.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black)
-                        )
-                    )
+                    .background(brush = Brush.verticalGradient(colors = listOf(Color.Transparent, Color.Black)))
             )
-
-            // Favorite button
-            IconButton(
-                onClick = onFavoriteClick,
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
+            IconButton(onClick = onFavoriteClick, modifier = Modifier.align(Alignment.TopEnd)) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                     contentDescription = "أضف للمفضلة",
@@ -83,21 +70,13 @@ fun MovieCard(
                 )
             }
         }
-
         Text(
             text = title,
             color = TextPrimary,
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-
-        Text(
-            text = "⭐ $rating",
-            color = TextSecondary,
-            modifier = Modifier.padding(top = 4.dp)
-        )
+        Text(text = "⭐ ${String.format("%.1f", rating)}", color = TextSecondary, modifier = Modifier.padding(top = 4.dp))
     }
 }
