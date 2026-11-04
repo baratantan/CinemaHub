@@ -2,6 +2,12 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Stream entries are operator-managed. Authenticated app clients may read; clients may never write.
+    match /{streamsCollection}/{itemId} {
+      allow read: if request.auth != null && streamsCollection == 'approvedStreams';
+      allow write: if false;
+    }
+
     match /movieReviews/{reviewId} {
       // Clients must use Firebase Authentication; the app signs users in anonymously.
       allow read: if request.auth != null;

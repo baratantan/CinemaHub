@@ -57,6 +57,9 @@ fun CinemaHubApp() {
             composable(Routes.HOME) {
                 HomeScreen(
                     onMovieClick = { navController.navigate("movie_detail/$it") },
+                    onContinueWatching = { item ->
+                        navController.navigate(playerRoute(item.videoUrl, item.title, item.itemId, item.posterUrl))
+                    },
                     onSearchClick = { navController.navigate(Routes.SEARCH) }
                 )
             }
@@ -85,9 +88,7 @@ fun CinemaHubApp() {
                 MovieDetailScreen(
                     movieId = movieId,
                     onBackClick = { navController.popBackStack() },
-                    onPlayClick = { videoUrl, title ->
-                        navController.navigate(playerRoute(videoUrl, title, movieId))
-                    }
+                    onPlayClick = { videoUrl, title -> navController.navigate(playerRoute(videoUrl, title, movieId)) }
                 )
             }
             composable(

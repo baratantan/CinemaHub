@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.cinemahub.app.data.network.scraper.ScrapedVideoLink
+import com.cinemahub.app.data.network.ApprovedStream
 import com.cinemahub.app.presentation.viewmodel.MovieDetailViewModel
 import com.cinemahub.app.ui.theme.BackgroundPrimary
 import com.cinemahub.app.ui.theme.BackgroundSecondary
@@ -48,19 +48,17 @@ import com.cinemahub.app.ui.theme.ErrorColor
 import com.cinemahub.app.ui.theme.PrimaryRed
 import com.cinemahub.app.ui.theme.TextPrimary
 import com.cinemahub.app.ui.theme.TextSecondary
-import com.cinemahub.app.ui.theme.TextTertiary
 
 @Composable
 fun MovieDetailScreen(
     movieId: Int,
-    pageUrl: String = "",
     viewModel: MovieDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onPlayClick: (String, String) -> Unit = { _, _ -> }
 ) {
-    LaunchedEffect(movieId, pageUrl) {
+    LaunchedEffect(movieId) {
         viewModel.loadMovie(movieId)
-        if (pageUrl.isNotBlank()) viewModel.fetchVideoLinksForMovie(pageUrl)
+        viewModel.loadApprovedStreams(movieId)
     }
 
     val isLoading by viewModel.isLoading.collectAsState()
@@ -142,7 +140,7 @@ fun MovieDetailScreen(
             }
             item {
                 Column(Modifier.fillMaxWidth().padding(16.dp)) {
-                    Text("خيارات التشغيل", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 12.dp))
+                    Text("مصادر التشغيل المعتمدة", color = TextPrimary, fontSize = 16.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 12.dp))
                     if (isLoadingVideo) {
                         Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator(color = PrimaryRed)
@@ -155,26 +153,20 @@ fun MovieDetailScreen(
                             shape = RoundedCornerShape(8.dp)
                         ) { Text(message, color = ErrorColor, modifier = Modifier.padding(12.dp), fontSize = 12.sp) }
                     }
-                    if (videoLinks.isNotEmpty()) {
-                        videoLinks.forEach { link ->
-                            VideoLinkCard(
-                                link = link,
-                                isSelected = selectedVideoLink?.url == link.url,
-                                onSelect = { viewModel.selectVideoLink(link) },
-                                onPlay = { onPlayClick(link.url, movie?.title.orEmpty()) }
-                            )
-                        }
-                    } else if (!isLoadingVideo && pageUrl.isNotBlank()) {
-                        Text("لم يتم العثور على روابط تشغيل", color = TextTertiary, modifier = Modifier.padding(vertical = 8.dp))
+                    videoLinks.forEach { stream ->
+                        ApprovedStreamCard(
+                            stream = stream,
+                            isSelected = selectedVideoLink?.url == stream.url,
+                            onSelect = { viewModel.selectVideoLink(stream) },
+                            onPlay = { onPlayClick(stream.url, movie?.title.orEmpty()) }
+                        )
                     }
                 }
             }
             item {
                 Column(Modifier.fillMaxWidth().padding(16.dp)) {
                     Button(
-                        onClick = {
-                            selectedVideoLink?.let { link -> onPlayClick(link.url, movie?.title.orEmpty()) }
-                        },
+                        onClick = { selectedVideoLink?.let { onPlayClick(it.url, movie?.title.orEmpty()) } },
                         modifier = Modifier.fillMaxWidth().height(48.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = PrimaryRed,
@@ -198,8 +190,8 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun VideoLinkCard(
-    link: ScrapedVideoLink,
+private fun ApprovedStreamCard(
+    stream: ApprovedStream,
     isSelected: Boolean,
     onSelect: () -> Unit,
     onPlay: () -> Unit
@@ -216,8 +208,8 @@ fun VideoLinkCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(Modifier.weight(1f)) {
-                    Text(link.serverName, color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    Text("الجودة: ${link.quality}", color = TextSecondary, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
+                    Text(stream.serverName, color = TextPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("الجودة: ${stream.quality}", color = TextSecondary, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
                 }
                 if (isSelected) Text("✓", color = PrimaryRed, fontSize = 20.sp)
             }

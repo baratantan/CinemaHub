@@ -45,6 +45,7 @@ fun SearchScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
     var selectedGenre by remember { mutableStateOf("الكل") }
     var year by remember { mutableStateOf("") }
     var minimumRating by remember { mutableFloatStateOf(0f) }
@@ -86,12 +87,12 @@ fun SearchScreen(
         )
 
         when {
-            isLoading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            isLoading && searchResults.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
             searchQuery.isNotBlank() && visibleMovies.isEmpty() -> Box(
                 Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center
-            ) { Text("لا توجد نتائج تطابق عوامل التصفية", color = TextSecondary) }
+            ) { Text(errorMessage ?: "لا توجد نتائج تطابق عوامل التصفية", color = TextSecondary) }
             else -> LazyColumn(Modifier.fillMaxSize().padding(horizontal = 8.dp)) {
                 items(visibleMovies, key = { it.id }) { movie ->
                     MovieCard(

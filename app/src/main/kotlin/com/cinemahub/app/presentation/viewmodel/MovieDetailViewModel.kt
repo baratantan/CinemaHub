@@ -2,7 +2,8 @@ package com.cinemahub.app.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cinemahub.app.data.network.scraper.ScrapedVideoLink
+import com.cinemahub.app.data.network.ApprovedStream
+import com.cinemahub.app.data.network.FirebaseStreamRepository
 import com.cinemahub.app.data.repository.MovieRepositoryImpl
 import com.cinemahub.app.data.repository.MovieReviewsRepository
 import com.cinemahub.app.domain.model.Movie
@@ -12,13 +13,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor(
     private val movieRepository: MovieRepositoryImpl,
+    private val streamRepository: FirebaseStreamRepository,
     private val reviewsRepository: MovieReviewsRepository
 ) : ViewModel() {
     private val _movie = MutableStateFlow<Movie?>(null)
@@ -27,14 +28,14 @@ class MovieDetailViewModel @Inject constructor(
     val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-    private val _videoLinks = MutableStateFlow<List<ScrapedVideoLink>>(emptyList())
-    val videoLinks: StateFlow<List<ScrapedVideoLink>> = _videoLinks.asStateFlow()
+    private val _videoLinks = MutableStateFlow<List<ApprovedStream>>(emptyList())
+    val videoLinks: StateFlow<List<ApprovedStream>> = _videoLinks.asStateFlow()
     private val _isLoadingVideo = MutableStateFlow(false)
     val isLoadingVideo: StateFlow<Boolean> = _isLoadingVideo.asStateFlow()
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
-    private val _selectedVideoLink = MutableStateFlow<ScrapedVideoLink?>(null)
-    val selectedVideoLink: StateFlow<ScrapedVideoLink?> = _selectedVideoLink.asStateFlow()
+    private val _selectedVideoLink = MutableStateFlow<ApprovedStream?>(null)
+    val selectedVideoLink: StateFlow<ApprovedStream?> = _selectedVideoLink.asStateFlow()
 
     private val _reviews = MutableStateFlow<List<MovieReview>>(emptyList())
     val reviews: StateFlow<List<MovieReview>> = _reviews.asStateFlow()
@@ -72,6 +73,28 @@ class MovieDetailViewModel @Inject constructor(
             }
         }
         loadReviews(movieId)
+    }
+
+    fun loadApprovedStreams(movieId: Int) {
+        viewModelScope.launch {
+            _isLoadingVideo.value = true
+            _errorMessage.value = null
+            try {
+                val streams = streamRepository.getApprovedStreams(movieId.toString())
+                _videoLinks.value = streams
+                _selectedVideoLink.value = streams.firstOrNull()
+                if (streams.isEmpty()) _errorMessage.value = "لا توجد مصادر تشغيل معتمدة لهذا العنوان."
+                streams.firstOrNull()?.let { stream ->
+                    movieRepository.updateMovieVideoUrl(movieId, stream.url)
+                }
+            } catch (e: Exception) {
+                _videoLinks.value = emptyList()
+                _selectedVideoLink.value = null
+                _errorMessage.value = e.message ?: "تعذر تحميل مصادر التشغيل المعتمدة."
+            } finally {
+                _isLoadingVideo.value = false
+            }
+        }
     }
 
     private fun loadReviews(movieId: Int) {
@@ -126,38 +149,12 @@ class MovieDetailViewModel @Inject constructor(
         }
     }
 
-    fun fetchVideoLinksForMovie(pageUrl: String) = fetchLinks { movieRepository.scrapeVideoLinks(pageUrl) }
-
-    fun fetchMultipleServersLinks(pageUrl: String) = fetchLinks {
-        movieRepository.scrapeMultipleServers(pageUrl).values.flatten()
-    }
-
-    private fun fetchLinks(load: suspend () -> List<ScrapedVideoLink>) {
-        viewModelScope.launch {
-            _isLoadingVideo.value = true
-            _errorMessage.value = null
-            try {
-                val links = load().distinctBy { it.url }
-                _videoLinks.value = links
-                _selectedVideoLink.value = links.firstOrNull()
-                if (links.isEmpty()) _errorMessage.value = "لم يتم العثور على روابط تشغيل متاحة."
-                links.firstOrNull()?.let { link ->
-                    _movie.value?.let { movie -> movieRepository.updateMovieVideoUrl(movie.id, link.url) }
-                }
-            } catch (e: Exception) {
-                _errorMessage.value = "تعذر جلب روابط التشغيل. تحقق من الاتصال وحاول مجددًا."
-            } finally {
-                _isLoadingVideo.value = false
-            }
-        }
-    }
-
-    fun selectVideoLink(videoLink: ScrapedVideoLink) {
-        _selectedVideoLink.value = videoLink
+    fun selectVideoLink(stream: ApprovedStream) {
+        _selectedVideoLink.value = stream
         _movie.value?.let { movie ->
             viewModelScope.launch {
-                runCatching { movieRepository.updateMovieVideoUrl(movie.id, videoLink.url) }
-                    .onFailure { _errorMessage.value = "تعذر حفظ رابط التشغيل المختار." }
+                runCatching { movieRepository.updateMovieVideoUrl(movie.id, stream.url) }
+                    .onFailure { _errorMessage.value = "تعذر حفظ مصدر التشغيل المختار." }
             }
         }
     }
