@@ -5,8 +5,7 @@ import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.request.get
-import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.readText
+import io.ktor.client.statement.bodyAsText
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,12 +24,11 @@ class KtorHttpClient @Inject constructor() {
     }
 
     /**
-     * الحصول ع��ى محتوى صفحة ويب
+     * الحصول على محتوى صفحة ويب
      */
     suspend fun getPageContent(url: String): String? {
         return try {
-            val response: HttpResponse = client.get(url)
-            response.readText()
+            client.get(url).bodyAsText()
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -42,9 +40,11 @@ class KtorHttpClient @Inject constructor() {
      */
     suspend fun getPageContentWithHeaders(url: String): Pair<String?, Map<String, String>> {
         return try {
-            val response: HttpResponse = client.get(url)
-            val headers = response.headers.toMap()
-            Pair(response.readText(), headers)
+            val response = client.get(url)
+            val headers = response.headers.entries().associate { (key, values) ->
+                key to values.joinToString(",")
+            }
+            Pair(response.bodyAsText(), headers)
         } catch (e: Exception) {
             e.printStackTrace()
             Pair(null, emptyMap())
