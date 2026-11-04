@@ -43,6 +43,7 @@ fun HomeScreen(
 ) {
     val isLoading by viewModel.isLoading.collectAsState()
     val allMovies by viewModel.allMovies.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
     var selectedGenre by remember { mutableStateOf("الكل") }
     var year by remember { mutableStateOf("") }
     var minimumRating by remember { mutableFloatStateOf(0f) }
@@ -84,12 +85,16 @@ fun HomeScreen(
                 sortOrder = MovieSortOrder.NEWEST
             }
         )
-        if (isLoading) {
+        if (isLoading && allMovies.isEmpty()) {
             Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = PrimaryRed)
             }
         } else if (filteredMovies.isEmpty()) {
-            Text("لا توجد أفلام تطابق عوامل التصفية", color = TextSecondary, modifier = Modifier.padding(24.dp))
+            Text(
+                errorMessage ?: "لا توجد أفلام تطابق عوامل التصفية",
+                color = TextSecondary,
+                modifier = Modifier.padding(24.dp)
+            )
         } else {
             if (featuredMovies.isNotEmpty()) {
                 Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {

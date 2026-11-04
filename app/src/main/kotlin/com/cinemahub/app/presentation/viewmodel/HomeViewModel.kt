@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.cinemahub.app.data.repository.MovieRepositoryImpl
 import com.cinemahub.app.domain.model.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,8 +33,10 @@ class HomeViewModel @Inject constructor(
             _errorMessage.value = null
             try {
                 movieRepository.getAllMovies().collect { _allMovies.value = it }
-            } catch (e: Exception) {
-                _errorMessage.value = "تعذر تحميل الأفلام. حاول مرة أخرى."
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _errorMessage.value = "تعذر تحميل الأفلام. تحقق من اتصالك وإعداد TMDB ثم حاول مجددًا."
             } finally {
                 _isLoading.value = false
             }

@@ -6,7 +6,6 @@ import com.cinemahub.app.data.repository.MovieRepositoryImpl
 import com.cinemahub.app.domain.model.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,10 +25,14 @@ class SearchViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private var searchJob: Job? = null
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
+    private var searchJob: kotlinx.coroutines.Job? = null
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
+        _errorMessage.value = null
         searchJob?.cancel()
         if (query.isBlank()) {
             _searchResults.value = emptyList()
@@ -41,12 +44,12 @@ class SearchViewModel @Inject constructor(
             try {
                 movieRepository.searchMovies(query.trim()).collect { results ->
                     _searchResults.value = results
-                    _isLoading.value = false
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
-                _searchResults.value = emptyList()
+                _errorMessage.value = "تعذر البحث عن الأفلام. تحقق من اتصالك وإعداد TMDB ثم حاول مجددًا."
+            } finally {
                 _isLoading.value = false
             }
         }

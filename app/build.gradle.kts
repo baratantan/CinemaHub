@@ -21,16 +21,19 @@ android {
             useSupportLibrary = true
         }
 
-        // Firebase client configuration is supplied locally/through CI; never commit credentials.
+        // Firebase and TMDB configuration is supplied locally/through CI; never commit credentials.
         val firebaseApiKey = providers.gradleProperty("FIREBASE_API_KEY").orElse("").get()
             .replace("\\", "\\\\").replace("\"", "\\\"")
         val firebaseAppId = providers.gradleProperty("FIREBASE_APP_ID").orElse("").get()
             .replace("\\", "\\\\").replace("\"", "\\\"")
         val firebaseProjectId = providers.gradleProperty("FIREBASE_PROJECT_ID").orElse("").get()
             .replace("\\", "\\\\").replace("\"", "\\\"")
+        val tmdbApiKey = providers.gradleProperty("TMDB_API_KEY").orElse("").get()
+            .replace("\\", "\\\\").replace("\"", "\\\"")
         buildConfigField("String", "FIREBASE_API_KEY", "\"$firebaseApiKey\"")
         buildConfigField("String", "FIREBASE_APP_ID", "\"$firebaseAppId\"")
         buildConfigField("String", "FIREBASE_PROJECT_ID", "\"$firebaseProjectId\"")
+        buildConfigField("String", "TMDB_API_KEY", "\"$tmdbApiKey\"")
     }
 
     buildTypes {
