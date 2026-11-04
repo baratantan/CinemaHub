@@ -31,10 +31,10 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -55,7 +55,6 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
-import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -225,8 +224,12 @@ fun VideoPlayerScreen(
             dismissButton = {
                 Row {
                     TextButton(onClick = {
-                        player?.trackSelectionParameters = player?.trackSelectionParameters
-                            ?.buildUpon()?.setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)?.build()
+                        player?.let { activePlayer ->
+                            activePlayer.trackSelectionParameters = activePlayer.trackSelectionParameters
+                                .buildUpon()
+                                .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
+                                .build()
+                        }
                         subtitleEnabled = false
                         showSubtitleDialog = false
                     }) { Text("إيقاف الترجمة") }

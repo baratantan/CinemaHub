@@ -55,7 +55,7 @@ class VideoScraper @Inject constructor() {
             }
 
             // البحث عن روابط HLS (.m3u8)
-            val hlsPattern = Regex("(['\"])(https?://[^'\"]*\\.m3u8)\1")
+            val hlsPattern = Regex("""(['"])(https?://[^'"]*\.m3u8)\1""")
             document.html().let { html ->
                 hlsPattern.findAll(html).forEach { match ->
                     videoLinks.add(
@@ -191,7 +191,7 @@ class VideoScraper @Inject constructor() {
                 val scriptContent = scriptTag.html()
 
                 // البحث عن روابط في متغيرات جافا سكريبت
-                val urlPattern = Regex("(['\"])(https?://[^'\"]*(?:mp4|m3u8))\1")
+                val urlPattern = Regex("""(['"])(https?://[^'"]*(?:mp4|m3u8))\1""")
                 urlPattern.findAll(scriptContent).forEach { match ->
                     videoLinks.add(
                         ScrapedVideoLink(
@@ -248,6 +248,6 @@ class VideoScraper @Inject constructor() {
             "mp4", "avi", "mkv", "mov", "flv", "wmv", "webm", "m3u8", "mpd"
         )
         return videoExtensions.any { url.endsWith(it, ignoreCase = true) } ||
-               videoExtensions.any { url.contains(".$it", ignoreCase = true) }
+                videoExtensions.any { url.contains(".$it", ignoreCase = true) }
     }
 }
